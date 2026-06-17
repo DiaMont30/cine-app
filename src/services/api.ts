@@ -65,3 +65,7 @@ export async function buscarFilmes(nome: string) {
   );
   return dados.results;
 }
+
+export function buscarDetalhesFilme(id: number) {
+  return requisicao<FilmeDetalhes>(`/movie/${id}?language=pt-BR`);
+}
