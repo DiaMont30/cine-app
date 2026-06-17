@@ -1,4 +1,4 @@
-const API_URL = "https://api.themoviedb.org/4";
+const API_URL = "https://api.themoviedb.org/3";
 const token = process.env.EXPO_PUBLIC_TMDB_TOKEN;
 
 export type Filme = {
