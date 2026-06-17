@@ -57,3 +57,11 @@ export function buscarLancamentos() {
 }
 export const buscarImagem = (caminho: string, tamanho = "w500") =>
   `https://image.tmdb.org/t/p/${tamanho}${caminho}`;
+
+
+export async function buscarFilmes(nome: string) {
+  const dados = await requisicao<RespostaFilmes>(
+    `/search/movie?query=${encodeURIComponent(nome)}&language=pt-BR&page=1`
+  );
+  return dados.results;
+}
