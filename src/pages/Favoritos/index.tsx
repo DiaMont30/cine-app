@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
 import { useFavoritos } from "../../contexts/FavoritosContext";
-import { colors } from "../../styles/colors";
+import { colors } from "../../themes/colors";
 
 export function Favoritos() {
   const { favoritos } = useFavoritos();

@@ -1,0 +1,71 @@
+import axios from "axios";
+
+const BASE_URL = "https://api.themoviedb.org/3";
+const TOKEN_LEITURA = process.env.EXPO_PUBLIC_TMDB_TOKEN;
+
+export const tmdbV3 = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    accept: "application/json",
+    Authorization: `Bearer ${TOKEN_LEITURA}`,
+  },
+});
+
+type RespostaRequestToken = {
+  success: boolean;
+  expires_at: string;
+  request_token: string;
+};
+
+type RespostaSession = {
+  success: boolean;
+  session_id: string;
+};
+
+type RespostaConta = {
+  id: number;
+  username: string;
+  name: string;
+  avatar: {
+    tmdb: {
+      avatar_path: string | null;
+    };
+  };
+  iso_639_1: string;
+  iso_3166_1: string;
+};
+
+export async function criarRequestToken(): Promise<string> {
+  const { data } = await tmdbV3.get<RespostaRequestToken>(
+    "/authentication/token/new",
+  );
+
+  return data.request_token;
+}
+
+export async function criarSessao(
+  requestTokenAprovado: string,
+): Promise<string> {
+  const { data } = await tmdbV3.post<RespostaSession>(
+    "/authentication/session/new",
+    { request_token: requestTokenAprovado },
+  );
+
+  return data.session_id;
+}
+
+export async function buscarContaLogada(
+  sessionId: string,
+): Promise<RespostaConta> {
+  const { data } = await tmdbV3.get<RespostaConta>("/account", {
+    params: { session_id: sessionId },
+  });
+
+  return data;
+}
+
+export async function encerrarSessao(sessionId: string): Promise<void> {
+  await tmdbV3.delete("/authentication/session", {
+    data: { session_id: sessionId },
+  });
+}
