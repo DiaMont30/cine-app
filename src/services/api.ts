@@ -1,4 +1,4 @@
-const API_URL = "https://api.themoviedb.org/4";
+const API_URL = "https://api.themoviedb.org/3";
 const token = process.env.EXPO_PUBLIC_TMDB_TOKEN;
 
 export type Filme = {
@@ -38,7 +38,7 @@ async function requisicao<T>(endpoint: string): Promise<T> {
 
 async function buscarLista(endpoint: string) {
   const dados = await requisicao<RespostaFilmes>(
-    `${endpoint}?language=pt-BR&page=1`
+    `${endpoint}?language=pt-BR&page=1`,
   );
 
   return dados.results;
@@ -58,10 +58,9 @@ export function buscarLancamentos() {
 export const buscarImagem = (caminho: string, tamanho = "w500") =>
   `https://image.tmdb.org/t/p/${tamanho}${caminho}`;
 
-
 export async function buscarFilmes(nome: string) {
   const dados = await requisicao<RespostaFilmes>(
-    `/search/movie?query=${encodeURIComponent(nome)}&language=pt-BR&page=1`
+    `/search/movie?query=${encodeURIComponent(nome)}&language=pt-BR&page=1`,
   );
   return dados.results;
 }

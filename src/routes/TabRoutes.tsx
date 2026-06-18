@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Buscar } from "../pages/Buscar";
 import { Favoritos } from "../pages/Favoritos";
 import { Home } from "../pages/Home";
-import { colors } from "../styles/colors";
+import { colors } from "../themes/colors";
 
 export type TabParamList = {
   Inicio: undefined;
