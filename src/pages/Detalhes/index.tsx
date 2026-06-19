@@ -11,11 +11,9 @@ import {
 } from "react-native";
 import { useFavoritos } from "../../contexts/FavoritosContext";
 import { RootStackParamList } from "../../routes/StackRoutes";
-import {
-  buscarDetalhesFilme,
-  buscarImagem,
-  FilmeDetalhes,
-} from "../../services/api";
+import { FilmeDetalhes } from "../../domains/entities/Filme";
+import { buscarDetalhesFilme, buscarImagem } from "../../data/tmdbV3";
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
 
