@@ -12,16 +12,16 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as colors from "../../themes/colors";
 import { CardFilme } from "../../components/CardFilme";
 import { RootStackParamList } from "../../routes/StackRoutes";
+import { Filme } from "../../domains/entities/Filme";
 import {
   buscarFilmesPopulares,
   buscarImagem,
   buscarLancamentos,
   buscarMaisAvaliados,
-  Filme,
-} from "../../services/api";
+} from "../../data/tmdbV3";
+import { darkTheme } from "../../themes/themes";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -39,10 +39,10 @@ export function Home() {
       buscarMaisAvaliados(),
       buscarLancamentos(),
     ])
-      .then(([populares, avaliados, lancamentos]) => {
-        setPopulares(populares);
-        setAvaliados(avaliados);
-        setLancamentos(lancamentos);
+      .then(([popularesData, avaliadosData, lancamentosData]) => {
+        setPopulares(popularesData);
+        setAvaliados(avaliadosData);
+        setLancamentos(lancamentosData);
       })
       .catch(() => setErro("Não foi possível carregar os filmes."))
       .finally(() => setLoading(false));
@@ -107,7 +107,7 @@ export function Home() {
           >
             <ImageBackground
               source={{
-                uri: buscarImagem(destaque.backdrop_path, "w780"),
+                uri: buscarImagem(destaque.backdrop_path, "780"),
               }}
               style={styles.banner}
               imageStyle={styles.bannerImagem}
@@ -121,7 +121,7 @@ export function Home() {
                   </Text>
 
                   <Text style={styles.nota}>
-                    ★ {destaque.vote_average.toFixed(1)}
+                    {destaque.vote_average.toFixed(1)}
                   </Text>
                 </View>
               </View>
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     width: 16,
   },
   erro: {
-    color: colors.colors.primary,
+    color: darkTheme.primary,
     fontSize: 16,
   },
   lista: {

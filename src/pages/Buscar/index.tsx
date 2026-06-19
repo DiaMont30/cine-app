@@ -5,13 +5,14 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
-import { buscarFilmes, Filme } from "../../services/api";
-import { colors } from "../../themes/colors";
+import { Input } from "../../components/Input";
+import { darkTheme } from "../../themes/themes";
+import { Filme } from "../../domains/entities/Filme";
+import { buscarFilmes } from "../../services/api";
 
 export function Buscar() {
   const [busca, setBusca] = useState("");
@@ -50,10 +51,9 @@ export function Buscar() {
       <Text style={styles.titulo}>Buscar filmes</Text>
 
       <View style={styles.busca}>
-        <TextInput
-          style={styles.input}
+        <Input
+          containerStyle={styles.input}
           placeholder="Digite o nome de um filme"
-          placeholderTextColor="#8990A4"
           value={busca}
           onChangeText={setBusca}
           onSubmitEditing={pesquisar}
@@ -69,7 +69,7 @@ export function Buscar() {
         <ActivityIndicator
           style={styles.loading}
           size="large"
-          color={colors.primary}
+          color={darkTheme.primary}
         />
       ) : mensagem ? (
         <Text style={styles.mensagem}>{mensagem}</Text>
@@ -91,42 +91,39 @@ export function Buscar() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: darkTheme.background,
     paddingHorizontal: 20,
   },
   titulo: {
-    color: colors.text,
+    color: darkTheme.text,
     fontSize: 26,
     fontWeight: "bold",
     marginVertical: 20,
   },
   busca: {
     flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   input: {
     flex: 1,
-    backgroundColor: colors.surface,
-    color: colors.text,
-    fontSize: 16,
-    padding: 14,
-    borderRadius: 10,
   },
   botao: {
-    backgroundColor: colors.primary,
+    backgroundColor: darkTheme.primary,
     justifyContent: "center",
     paddingHorizontal: 18,
     borderRadius: 10,
+    alignSelf: "stretch",
   },
   botaoTexto: {
-    color: colors.white,
+    color: darkTheme.white,
     fontWeight: "bold",
   },
   loading: {
     marginTop: 40,
   },
   mensagem: {
-    color: colors.muted,
+    color: darkTheme.muted,
     fontSize: 16,
     marginTop: 30,
     textAlign: "center",

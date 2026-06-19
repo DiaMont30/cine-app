@@ -2,7 +2,9 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { RootStackParamList } from "../../routes/StackRoutes";
-import { buscarImagem, Filme } from "../../services/api";
+import { Filme } from "../../domains/entities/Filme";
+import { buscarImagem } from "../../data/tmdbV3";
+
 
 type Props = {
   filme: Filme;

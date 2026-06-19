@@ -5,6 +5,7 @@ import { Favoritos } from "../pages/Favoritos";
 import { Home } from "../pages/Home";
 import { Perfil } from "../pages/Perfil";
 import { colors } from "../themes/colors";
+import { darkTheme } from "../themes/themes";
 
 export type TabParamList = {
   Inicio: undefined;
@@ -27,11 +28,11 @@ export function TabRoutes() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.muted,
+        tabBarActiveTintColor: darkTheme.primary,
+        tabBarInactiveTintColor: darkTheme.muted,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.surface,
+          backgroundColor: darkTheme.surface,
+          borderTopColor: darkTheme.surface,
         },
         tabBarIcon: ({ color, size }) => (
           <Ionicons name={icons[route.name]} color={color} size={size} />

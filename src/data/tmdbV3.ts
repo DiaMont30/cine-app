@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Filme, FilmeDetalhes } from "../domains/entities/Filme";
 
 const BASE_URL = "https://api.themoviedb.org/3";
 const TOKEN_LEITURA = process.env.EXPO_PUBLIC_TMDB_TOKEN;
@@ -69,3 +70,39 @@ export async function encerrarSessao(sessionId: string): Promise<void> {
     data: { session_id: sessionId },
   });
 }
+
+
+type RespostaFilmes = {
+  results: Filme[];
+};
+
+export async function buscarFilmesPopulares(): Promise<Filme[]> {
+  const { data } = await tmdbV3.get<RespostaFilmes>("/movie/popular", {
+    params: { language: "pt-BR", page: 1 },
+  });
+  return data.results;
+}
+
+export async function buscarMaisAvaliados(): Promise<Filme[]> {
+  const { data } = await tmdbV3.get<RespostaFilmes>("/movie/top_rated", {
+    params: { language: "pt-BR", page: 1 },
+  });
+  return data.results;
+}
+
+export async function buscarLancamentos(): Promise<Filme[]> {
+  const { data } = await tmdbV3.get<RespostaFilmes>("/movie/now_playing", {
+    params: { language: "pt-BR", page: 1 },
+  });
+  return data.results;
+}
+
+export async function buscarDetalhesFilme(id: number): Promise<FilmeDetalhes> {
+  const { data } = await tmdbV3.get<FilmeDetalhes>(`/movie/${id}`, {
+    params: { language: "pt-BR" },
+  });
+  return data;
+}
+
+export const buscarImagem = (caminho: string, tamanho = "w500") =>
+  `https://image.tmdb.org/t/p/${tamanho}${caminho}`;
