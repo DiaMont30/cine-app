@@ -5,14 +5,14 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
-import { buscarFilmes, Filme } from "../../services/api";
 import { Input } from "../../components/Input";
 import { darkTheme } from "../../themes/themes";
+import { Filme } from "../../domains/entities/Filme";
+import { buscarFilmes } from "../../services/api";
 
 export function Buscar() {
   const [busca, setBusca] = useState("");
