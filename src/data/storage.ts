@@ -3,6 +3,7 @@ import { Usuario } from "../domains/entities/Usuario";
 
 const CHAVE_SESSION_ID = "@cineapp:sessionId";
 const CHAVE_USUARIO = "@cineapp:usuario";
+const CHAVE_TEMA = "@cineapp:tema";
 
 export async function salvarSessaoAuth(sessionId: string, usuario: Usuario) {
   await AsyncStorage.setItem(CHAVE_SESSION_ID, sessionId);
@@ -29,4 +30,12 @@ export async function buscarSessaoAuth(): Promise<{
 export async function limparSessaoAuth() {
   await AsyncStorage.removeItem(CHAVE_SESSION_ID);
   await AsyncStorage.removeItem(CHAVE_USUARIO);
+}
+
+export async function salvarTema(tema: string) {
+  await AsyncStorage.setItem(CHAVE_TEMA, tema);
+}
+
+export async function buscarTema(): Promise<string | null> {
+  return await AsyncStorage.getItem(CHAVE_TEMA);
 }

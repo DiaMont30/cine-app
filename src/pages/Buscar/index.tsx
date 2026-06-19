@@ -12,7 +12,8 @@ import { CardFilme } from "../../components/CardFilme";
 import { Input } from "../../components/Input";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Filme } from "../../domains/entities/Filme";
-import { buscarFilmes } from "../../services/api";
+import { buscarFilmes } from "../../data/tmdbV3";
+
 
 export function Buscar() {
   const { theme } = useTheme();
