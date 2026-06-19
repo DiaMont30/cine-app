@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -9,17 +10,36 @@ import {
   Text,
   View,
 } from "react-native";
+import { useAuth } from "../../contexts/AuthContext";
 import { useFavoritos } from "../../contexts/FavoritosContext";
-import { RootStackParamList } from "../../routes/StackRoutes";
-import { FilmeDetalhes } from "../../domains/entities/Filme";
-import { buscarDetalhesFilme, buscarImagem } from "../../data/tmdbV3";
 import { useTheme } from "../../contexts/ThemeContext";
+import {
+  adicionarFilmeAssistido,
+  buscarDetalhesFilme,
+  buscarFilmesAssistidos,
+  buscarImagem,
+  buscarListasUsuario,
+  criarListaAssistidos,
+  removerFilmeAssistido,
+} from "../../data/tmdbV3";
+import {
+  buscarListaAssistidosId,
+  salvarListaAssistidosId,
+} from "../../data/storage";
+import { FilmeDetalhes } from "../../domains/entities/Filme";
+import { RootStackParamList } from "../../routes/StackRoutes";
+
 type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
   const [erro, setErro] = useState("");
+  const [assistido, setAssistido] = useState(false);
+  const [listId, setListId] = useState<number | null>(null);
+  const [alterandoAssistido, setAlterandoAssistido] = useState(false);
+
   const { alternarFavorito, estaFavorito } = useFavoritos();
+  const { usuario, sessionId } = useAuth();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -27,6 +47,78 @@ export function Detalhes({ route, navigation }: Props) {
       .then(setFilme)
       .catch(() => setErro("Não foi possível carregar o filme."));
   }, [route.params.id]);
+
+  useEffect(() => {
+    async function verificarAssistido() {
+      if (!usuario || !sessionId) {
+        return;
+      }
+
+      try {
+        let idLista = await buscarListaAssistidosId();
+
+        if (!idLista) {
+          const listas = await buscarListasUsuario(usuario.id, sessionId);
+
+          const listaExistente = listas.find(
+            (lista) => lista.name === "CineApp - Filmes Assistidos",
+          );
+
+          idLista = listaExistente?.id ?? null;
+
+          if (!idLista) {
+            idLista = await criarListaAssistidos(sessionId);
+          }
+
+          await salvarListaAssistidosId(idLista);
+        }
+
+        const filmesAssistidos = await buscarFilmesAssistidos(idLista);
+
+        setListId(idLista);
+        setAssistido(
+          filmesAssistidos.some((item) => item.id === route.params.id),
+        );
+      } catch (error) {
+        console.error("[Detalhes] verificarAssistido:", error);
+      }
+    }
+
+    verificarAssistido();
+  }, [route.params.id, sessionId, usuario]);
+
+  async function alternarAssistido() {
+    if (!filme || !sessionId || !listId) {
+      Alert.alert(
+        "Atenção",
+        "Não foi possível acessar sua lista de filmes assistidos.",
+      );
+      return;
+    }
+
+    try {
+      setAlterandoAssistido(true);
+
+      if (assistido) {
+        await removerFilmeAssistido(listId, filme.id, sessionId);
+        setAssistido(false);
+      } else {
+        await adicionarFilmeAssistido(listId, filme.id, sessionId);
+        setAssistido(true);
+      }
+    } catch (error) {
+      console.error("[Detalhes] alternarAssistido:", error);
+
+      Alert.alert(
+        "Erro",
+        assistido
+          ? "Não foi possível remover o filme dos assistidos."
+          : "Não foi possível marcar o filme como assistido.",
+      );
+    } finally {
+      setAlterandoAssistido(false);
+    }
+  }
 
   if (erro) {
     return (
@@ -45,6 +137,7 @@ export function Detalhes({ route, navigation }: Props) {
   }
 
   const ano = filme.release_date?.slice(0, 4) || "Sem data";
+
   const duracao = filme.runtime
     ? `${Math.floor(filme.runtime / 60)}h ${filme.runtime % 60}min`
     : "Duração não informada";
@@ -52,13 +145,17 @@ export function Detalhes({ route, navigation }: Props) {
   const favorito = estaFavorito(filme.id);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      {filme.backdrop_path && (
-        <Image
-          source={{ uri: buscarImagem(filme.backdrop_path, "w780") }}
-          style={styles.banner}
-        />
-      )}
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      >
+    {filme.backdrop_path && (
+  <Image
+    source={{ uri: buscarImagem(filme.backdrop_path, "w780") }}
+    style={styles.banner}
+    resizeMode="cover"
+  />
+)}
+  
 
       <View style={styles.conteudo}>
         <Pressable onPress={() => navigation.goBack()}>
@@ -74,12 +171,21 @@ export function Detalhes({ route, navigation }: Props) {
           )}
 
           <View style={styles.resumo}>
-            <Text style={[styles.titulo, { color: theme.text }]}>{filme.title}</Text>
+            <Text style={[styles.titulo, { color: theme.text }]}>
+              {filme.title}
+            </Text>
+
             <Text style={[styles.nota, { color: theme.primary }]}>
               ★ {filme.vote_average.toFixed(1)}
             </Text>
-            <Text style={[styles.texto, { color: theme.muted }]}>{ano}</Text>
-            <Text style={[styles.texto, { color: theme.muted }]}>{duracao}</Text>
+
+            <Text style={[styles.texto, { color: theme.muted }]}>
+              {ano}
+            </Text>
+
+            <Text style={[styles.texto, { color: theme.muted }]}>
+              {duracao}
+            </Text>
           </View>
         </View>
 
@@ -88,15 +194,48 @@ export function Detalhes({ route, navigation }: Props) {
         </Text>
 
         <Pressable
-          style={[styles.botao, { backgroundColor: theme.primary }, favorito && { backgroundColor: theme.secondary }]}
+          style={[
+            styles.botao,
+            { backgroundColor: theme.primary },
+            favorito && { backgroundColor: theme.secondary },
+          ]}
           onPress={() => alternarFavorito(filme)}
         >
           <Text style={styles.botaoTexto}>
-            {favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            {favorito
+              ? "Remover dos favoritos"
+              : "Adicionar aos favoritos"}
           </Text>
         </Pressable>
 
-        <Text style={[styles.subtitulo, { color: theme.text }]}>Sinopse</Text>
+        <Pressable
+          style={[
+            styles.botao,
+            styles.botaoAssistido,
+            {
+              backgroundColor: assistido
+                ? theme.secondary
+                : theme.primary,
+            },
+            alterandoAssistido && styles.botaoDesabilitado,
+          ]}
+          onPress={alternarAssistido}
+          disabled={alterandoAssistido}
+        >
+          {alterandoAssistido ? (
+            <ActivityIndicator color={theme.white} />
+          ) : (
+            <Text style={styles.botaoTexto}>
+              {assistido
+                ? "Remover dos assistidos"
+                : "Marcar como assistido"}
+            </Text>
+          )}
+        </Pressable>
+
+        <Text style={[styles.subtitulo, { color: theme.text }]}>
+          Sinopse
+        </Text>
 
         <Text style={[styles.sinopse, { color: theme.text }]}>
           {filme.overview || "Sinopse não disponível."}
@@ -157,11 +296,17 @@ const styles = StyleSheet.create({
   },
   botao: {
     alignItems: "center",
+    justifyContent: "center",
+    minHeight: 48,
     padding: 14,
     borderRadius: 10,
     marginTop: 24,
   },
-  botaoAtivo: {
+  botaoAssistido: {
+    marginTop: 12,
+  },
+  botaoDesabilitado: {
+    opacity: 0.7,
   },
   botaoTexto: {
     color: "#FFFFFF",
@@ -181,5 +326,5 @@ const styles = StyleSheet.create({
   },
   erro: {
     fontSize: 16,
-  }
+  },
 });

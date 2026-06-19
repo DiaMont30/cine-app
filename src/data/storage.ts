@@ -4,6 +4,7 @@ import { Usuario } from "../domains/entities/Usuario";
 const CHAVE_SESSION_ID = "@cineapp:sessionId";
 const CHAVE_USUARIO = "@cineapp:usuario";
 const CHAVE_TEMA = "@cineapp:tema";
+const CHAVE_LISTA_ASSISTIDOS = "@cineapp:listaAssistidos";
 
 export async function salvarSessaoAuth(sessionId: string, usuario: Usuario) {
   await AsyncStorage.setItem(CHAVE_SESSION_ID, sessionId);
@@ -30,6 +31,7 @@ export async function buscarSessaoAuth(): Promise<{
 export async function limparSessaoAuth() {
   await AsyncStorage.removeItem(CHAVE_SESSION_ID);
   await AsyncStorage.removeItem(CHAVE_USUARIO);
+  await AsyncStorage.removeItem(CHAVE_LISTA_ASSISTIDOS);
 }
 
 export async function salvarTema(tema: string) {
@@ -38,4 +40,14 @@ export async function salvarTema(tema: string) {
 
 export async function buscarTema(): Promise<string | null> {
   return await AsyncStorage.getItem(CHAVE_TEMA);
+}
+
+export async function salvarListaAssistidosId(listId: number) {
+  await AsyncStorage.setItem(CHAVE_LISTA_ASSISTIDOS, listId.toString());
+}
+
+export async function buscarListaAssistidosId(): Promise<number | null> {
+  const listId = await AsyncStorage.getItem(CHAVE_LISTA_ASSISTIDOS);
+
+  return listId ? Number(listId) : null;
 }
