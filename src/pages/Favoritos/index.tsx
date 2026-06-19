@@ -2,14 +2,15 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
 import { useFavoritos } from "../../contexts/FavoritosContext";
-import { darkTheme } from "../../themes/themes";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export function Favoritos() {
   const { favoritos } = useFavoritos();
+  const { theme } = useTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>Meus favoritos</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.titulo, { color: theme.text }]}>Meus favoritos</Text>
 
       {favoritos.length ? (
         <FlatList
@@ -23,7 +24,7 @@ export function Favoritos() {
         />
       ) : (
         <View style={styles.vazio}>
-          <Text style={styles.texto}>Nenhum filme favoritado.</Text>
+          <Text style={[styles.texto, { color: theme.muted }]}>Nenhum filme favoritado.</Text>
         </View>
       )}
     </SafeAreaView>
@@ -33,11 +34,9 @@ export function Favoritos() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: darkTheme.background,
     paddingHorizontal: 20,
   },
   titulo: {
-    color: darkTheme.text,
     fontSize: 26,
     fontWeight: "bold",
     marginVertical: 20,
@@ -55,7 +54,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   texto: {
-    color: darkTheme.muted,
     fontSize: 16,
   },
 });

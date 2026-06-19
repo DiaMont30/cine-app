@@ -10,11 +10,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../../contexts/AuthContext";
-import { darkTheme } from "../../themes/themes";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export function Login() {
   const { signIn } = useAuth();
   const [entrando, setEntrando] = useState(false);
+  const { theme } = useTheme();
 
   async function handleEntrar() {
     try {
@@ -26,7 +27,7 @@ export function Login() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.conteudo}>
         <Image
           source={require("../../../assets/Logo-sem-fundo.png")}
@@ -34,26 +35,26 @@ export function Login() {
           resizeMode="contain"
         />
 
-        <Text style={styles.titulo}>CineApp</Text>
+        <Text style={[styles.titulo, { color: theme.text }]}>CineApp</Text>
 
-        <Text style={styles.descricao}>
+        <Text style={[styles.descricao, { color: theme.muted }]}>
           Entre com sua conta TMDB para favoritar filmes, marcar como assistido
           e acompanhar lançamentos.
         </Text>
 
         <Pressable
-          style={[styles.botao, entrando && styles.botaoDesabilitado]}
+          style={[styles.botao, { backgroundColor: theme.primary }, entrando && styles.botaoDesabilitado]}
           onPress={handleEntrar}
           disabled={entrando}
         >
           {entrando ? (
-            <ActivityIndicator color={darkTheme.white} />
+            <ActivityIndicator color={theme.white} />
           ) : (
-            <Text style={styles.botaoTexto}>Entrar com TMDB</Text>
+            <Text style={[styles.botaoTexto, { color: theme.white }]}>Entrar com TMDB</Text>
           )}
         </Pressable>
 
-        <Text style={styles.creditos}>
+        <Text style={[styles.creditos, { color: theme.muted }]}>
           Este produto usa a API do TMDB, mas não é endossado ou certificado
           pelo TMDB.
         </Text>
@@ -65,7 +66,6 @@ export function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: darkTheme.background,
   },
   conteudo: {
     flex: 1,
@@ -79,20 +79,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   titulo: {
-    color: darkTheme.text,
     fontSize: 32,
     fontWeight: "bold",
     marginBottom: 12,
   },
   descricao: {
-    color: darkTheme.muted,
     fontSize: 15,
     textAlign: "center",
     lineHeight: 22,
     marginBottom: 32,
   },
   botao: {
-    backgroundColor: darkTheme.primary,
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 10,
@@ -103,12 +100,10 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   botaoTexto: {
-    color: darkTheme.white,
     fontSize: 16,
     fontWeight: "bold",
   },
   creditos: {
-    color: darkTheme.muted,
     fontSize: 11,
     textAlign: "center",
     marginTop: 40,
