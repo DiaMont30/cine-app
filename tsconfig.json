@@ -1,6 +1,8 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "jsx": "react-jsx"
   }
 }
+/* tive que adicionar o "jsx": "react-jsx" pq o meu TS não tava reconhecendo a sintaxe JSX que a gente tava usando no arquivos .tsx */

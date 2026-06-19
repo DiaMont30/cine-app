@@ -3,12 +3,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Buscar } from "../pages/Buscar";
 import { Favoritos } from "../pages/Favoritos";
 import { Home } from "../pages/Home";
+import { Perfil } from "../pages/Perfil";
 import { colors } from "../themes/colors";
 
 export type TabParamList = {
   Inicio: undefined;
   Buscar: undefined;
   Favoritos: undefined;
+  Perfil: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -17,6 +19,7 @@ const icons = {
   Inicio: "home-outline",
   Buscar: "search-outline",
   Favoritos: "heart-outline",
+  Perfil: "person-outline",
 } as const;
 
 export function TabRoutes() {
@@ -44,6 +47,8 @@ export function TabRoutes() {
       <Tab.Screen name="Buscar" component={Buscar} />
 
       <Tab.Screen name="Favoritos" component={Favoritos} />
+
+      <Tab.Screen name="Perfil" component={Perfil} />
     </Tab.Navigator>
   );
 }
