@@ -104,5 +104,16 @@ export async function buscarDetalhesFilme(id: number): Promise<FilmeDetalhes> {
   return data;
 }
 
+export async function buscarFilmes(nome: string): Promise<Filme[]> {
+  const { data } = await tmdbV3.get<RespostaFilmes>("/search/movie", {
+    params: {
+      query: nome,
+      language: "pt-BR",
+      page: 1,
+    },
+  });
+  return data.results;
+}
+
 export const buscarImagem = (caminho: string, tamanho = "w500") =>
   `https://image.tmdb.org/t/p/${tamanho}${caminho}`;
