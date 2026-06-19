@@ -36,6 +36,36 @@ type RespostaConta = {
   iso_3166_1: string;
 };
 
+type RespostaFilmes = {
+  results: Filme[];
+};
+
+type ListaUsuario = {
+  id: number;
+  name: string;
+  description: string;
+  item_count: number;
+};
+
+type RespostaListasUsuario = {
+  results: ListaUsuario[];
+};
+
+type RespostaCriarLista = {
+  success: boolean;
+  status_code: number;
+  status_message: string;
+  list_id: number;
+};
+
+type RespostaListaDetalhes = {
+  id: number;
+  name: string;
+  description: string;
+  item_count: number;
+  items: Filme[];
+};
+
 export async function criarRequestToken(): Promise<string> {
   const { data } = await tmdbV3.get<RespostaRequestToken>(
     "/authentication/token/new",
@@ -71,15 +101,11 @@ export async function encerrarSessao(sessionId: string): Promise<void> {
   });
 }
 
-
-type RespostaFilmes = {
-  results: Filme[];
-};
-
 export async function buscarFilmesPopulares(): Promise<Filme[]> {
   const { data } = await tmdbV3.get<RespostaFilmes>("/movie/popular", {
     params: { language: "pt-BR", page: 1 },
   });
+
   return data.results;
 }
 
@@ -87,6 +113,7 @@ export async function buscarMaisAvaliados(): Promise<Filme[]> {
   const { data } = await tmdbV3.get<RespostaFilmes>("/movie/top_rated", {
     params: { language: "pt-BR", page: 1 },
   });
+
   return data.results;
 }
 
@@ -94,6 +121,7 @@ export async function buscarLancamentos(): Promise<Filme[]> {
   const { data } = await tmdbV3.get<RespostaFilmes>("/movie/now_playing", {
     params: { language: "pt-BR", page: 1 },
   });
+
   return data.results;
 }
 
@@ -101,6 +129,7 @@ export async function buscarDetalhesFilme(id: number): Promise<FilmeDetalhes> {
   const { data } = await tmdbV3.get<FilmeDetalhes>(`/movie/${id}`, {
     params: { language: "pt-BR" },
   });
+
   return data;
 }
 
@@ -112,7 +141,89 @@ export async function buscarFilmes(nome: string): Promise<Filme[]> {
       page: 1,
     },
   });
+
   return data.results;
+}
+
+export async function buscarListasUsuario(
+  accountId: number,
+  sessionId: string,
+): Promise<ListaUsuario[]> {
+  const { data } = await tmdbV3.get<RespostaListasUsuario>(
+    `/account/${accountId}/lists`,
+    {
+      params: {
+        session_id: sessionId,
+        page: 1,
+      },
+    },
+  );
+
+  return data.results;
+}
+
+export async function criarListaAssistidos(sessionId: string): Promise<number> {
+  const { data } = await tmdbV3.post<RespostaCriarLista>(
+    "/list",
+    {
+      name: "CineApp - Filmes Assistidos",
+      description: "Filmes assistidos pelo usuário no CineApp",
+      language: "pt",
+    },
+    {
+      params: {
+        session_id: sessionId,
+      },
+    },
+  );
+
+  return data.list_id;
+}
+
+export async function buscarFilmesAssistidos(listId: number): Promise<Filme[]> {
+  const { data } = await tmdbV3.get<RespostaListaDetalhes>(`/list/${listId}`, {
+    params: {
+      language: "pt-BR",
+    },
+  });
+
+  return data.items;
+}
+
+export async function adicionarFilmeAssistido(
+  listId: number,
+  filmeId: number,
+  sessionId: string,
+): Promise<void> {
+  await tmdbV3.post(
+    `/list/${listId}/add_item`,
+    {
+      media_id: filmeId,
+    },
+    {
+      params: {
+        session_id: sessionId,
+      },
+    },
+  );
+}
+
+export async function removerFilmeAssistido(
+  listId: number,
+  filmeId: number,
+  sessionId: string,
+): Promise<void> {
+  await tmdbV3.post(
+    `/list/${listId}/remove_item`,
+    {
+      media_id: filmeId,
+    },
+    {
+      params: {
+        session_id: sessionId,
+      },
+    },
+  );
 }
 
 export const buscarImagem = (caminho: string, tamanho = "w500") =>

@@ -13,15 +13,15 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
-import { RootStackParamList } from "../../routes/StackRoutes";
-import { Filme } from "../../domains/entities/Filme";
+import { useTheme } from "../../contexts/ThemeContext";
 import {
   buscarFilmesPopulares,
   buscarImagem,
   buscarLancamentos,
   buscarMaisAvaliados,
 } from "../../data/tmdbV3";
-import { useTheme } from "../../contexts/ThemeContext";
+import { Filme } from "../../domains/entities/Filme";
+import { RootStackParamList } from "../../routes/StackRoutes";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -50,6 +50,7 @@ export function Home() {
   }, []);
 
   const destaque = populares[0];
+  const imagemDestaque = destaque?.backdrop_path;
 
   function ListaFilmes({
     titulo,
@@ -60,7 +61,9 @@ export function Home() {
   }) {
     return (
       <View style={styles.secao}>
-        <Text style={[styles.secaoTitulo, { color: theme.text }]}>{titulo}</Text>
+        <Text style={[styles.secaoTitulo, { color: theme.text }]}>
+          {titulo}
+        </Text>
 
         <FlatList
           data={filmes}
@@ -92,39 +95,51 @@ export function Home() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={["top"]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      edges={["top"]}
+    >
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.cabecalho}>
           <Text style={[styles.titulo, { color: theme.text }]}>CineApp</Text>
+
           <Text style={[styles.subtitulo, { color: theme.muted }]}>
             Descubra seus próximos filmes favoritos
           </Text>
         </View>
 
-        {destaque?.backdrop_path && (
+        {destaque && imagemDestaque && (
           <Pressable
             style={styles.destaque}
-            onPress={() => navigation.navigate("Detalhes", { id: destaque.id })}
+            onPress={() =>
+              navigation.navigate("Detalhes", { id: destaque.id })
+            }
           >
             <ImageBackground
               source={{
-                uri: buscarImagem(destaque.backdrop_path, "780"),
+                uri: buscarImagem(imagemDestaque, "w780"),
               }}
               style={styles.banner}
               imageStyle={styles.bannerImagem}
+              resizeMode="cover"
             >
-              <View style={[styles.sombra, { backgroundColor: theme.overlay }]}>
-                <View>
-                  <Text style={[styles.destaqueTexto, { color: theme.text }]}>Em destaque</Text>
+              <View style={styles.sombra}>
+                <Text
+                  style={[styles.destaqueTexto, { color: theme.white }]}
+                >
+                  Em destaque
+                </Text>
 
-                  <Text style={[styles.destaqueTitulo, { color: theme.white }]} numberOfLines={2}>
-                    {destaque.title}
-                  </Text>
+                <Text
+                  style={[styles.destaqueTitulo, { color: theme.white }]}
+                  numberOfLines={2}
+                >
+                  {destaque.title}
+                </Text>
 
-                  <Text style={[styles.nota, { color: theme.white }]}>
-                    {destaque.vote_average.toFixed(1)}
-                  </Text>
-                </View>
+                <Text style={[styles.nota, { color: theme.white }]}>
+                  ★ {destaque.vote_average.toFixed(1)}
+                </Text>
               </View>
             </ImageBackground>
           </Pressable>
@@ -161,8 +176,11 @@ const styles = StyleSheet.create({
   },
   destaque: {
     margin: 20,
+    borderRadius: 16,
+    overflow: "hidden",
   },
   banner: {
+    width: "100%",
     height: 220,
   },
   bannerImagem: {
@@ -170,7 +188,7 @@ const styles = StyleSheet.create({
   },
   sombra: {
     flex: 1,
-    borderRadius: 16,
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
     justifyContent: "flex-end",
     padding: 20,
   },
@@ -205,3 +223,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 });
+

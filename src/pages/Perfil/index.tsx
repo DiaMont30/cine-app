@@ -143,10 +143,6 @@ export function Perfil() {
                 <Text style={[styles.botaoTexto, { color: theme.white }]}>Sair da conta</Text>
             </Pressable>
 
-            <Text style={[styles.creditos, { color: theme.muted }]}>
-                Este produto utiliza a API da TMDB, mas não é endossado ou certificado
-                pela TMDB.
-            </Text>
         </SafeAreaView>
     );
 }
