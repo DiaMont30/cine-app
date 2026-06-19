@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
 import { useFavoritos } from "../../contexts/FavoritosContext";
-import { colors } from "../../themes/colors";
+import { darkTheme } from "../../themes/themes";
 
 export function Favoritos() {
   const { favoritos } = useFavoritos();
@@ -33,11 +33,11 @@ export function Favoritos() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: darkTheme.background,
     paddingHorizontal: 20,
   },
   titulo: {
-    color: colors.text,
+    color: darkTheme.text,
     fontSize: 26,
     fontWeight: "bold",
     marginVertical: 20,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   texto: {
-    color: colors.muted,
+    color: darkTheme.muted,
     fontSize: 16,
   },
 });

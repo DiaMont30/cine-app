@@ -21,6 +21,7 @@ import {
   buscarLancamentos,
   buscarMaisAvaliados,
 } from "../../data/tmdbV3";
+import { darkTheme } from "../../themes/themes";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -102,9 +103,7 @@ export function Home() {
         {destaque?.backdrop_path && (
           <Pressable
             style={styles.destaque}
-            onPress={() =>
-              navigation.navigate("Detalhes", { id: destaque.id })
-            }
+            onPress={() => navigation.navigate("Detalhes", { id: destaque.id })}
           >
             <ImageBackground
               source={{
@@ -122,7 +121,7 @@ export function Home() {
                   </Text>
 
                   <Text style={styles.nota}>
-                     {destaque.vote_average.toFixed(1)}
+                    {destaque.vote_average.toFixed(1)}
                   </Text>
                 </View>
               </View>
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
     width: 16,
   },
   erro: {
-    color: "#C94F58",
+    color: darkTheme.primary,
     fontSize: 16,
   },
   lista: {
