@@ -24,12 +24,6 @@ async function requisicao<T>(endpoint: string): Promise<T> {
 
 
 
-// PARTE DA ANA PAULA  
-export async function buscarFilmes(nome: string) {
-  const dados = await requisicao<RespostaFilmes>(
-    `/search/movie?query=${encodeURIComponent(nome)}&language=pt-BR&page=1`
-  );
-  return dados.results;
-}
+
 
 

@@ -10,9 +10,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
-import { buscarFilmes } from "../../services/api";
 import { colors } from "../../themes/colors";
 import { Filme } from "../../domains/entities/Filme";
+import { buscarFilmes } from "../../data/tmdbV3";
 
 export function Buscar() {
   const [busca, setBusca] = useState("");
