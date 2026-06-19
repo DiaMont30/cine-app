@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Alert, Image, Pressable, StyleSheet, Text, View, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
-import { colors } from "../../themes/colors";
+import { darkTheme as colors } from "../../themes/themes";
 
 export function Perfil() {
     const { usuario, signOut } = useAuth();
