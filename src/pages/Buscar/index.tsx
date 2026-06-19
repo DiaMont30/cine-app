@@ -10,12 +10,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
 import { Input } from "../../components/Input";
-import { darkTheme } from "../../themes/themes";
+import { useTheme } from "../../contexts/ThemeContext";
 import { Filme } from "../../domains/entities/Filme";
 import { buscarFilmes } from "../../data/tmdbV3";
 
 
 export function Buscar() {
+  const { theme } = useTheme();
   const [busca, setBusca] = useState("");
   const [filmes, setFilmes] = useState<Filme[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,8 +49,8 @@ export function Buscar() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>Buscar filmes</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.titulo, { color: theme.text }]}>Buscar filmes</Text>
 
       <View style={styles.busca}>
         <Input
@@ -61,8 +62,8 @@ export function Buscar() {
           returnKeyType="search"
         />
 
-        <Pressable style={styles.botao} onPress={pesquisar}>
-          <Text style={styles.botaoTexto}>Buscar</Text>
+        <Pressable style={[styles.botao, { backgroundColor: theme.primary }]} onPress={pesquisar}>
+          <Text style={[styles.botaoTexto, { color: theme.white }]}>Buscar</Text>
         </Pressable>
       </View>
 
@@ -70,10 +71,10 @@ export function Buscar() {
         <ActivityIndicator
           style={styles.loading}
           size="large"
-          color={darkTheme.primary}
+          color={theme.primary}
         />
       ) : mensagem ? (
-        <Text style={styles.mensagem}>{mensagem}</Text>
+        <Text style={[styles.mensagem, { color: theme.muted }]}>{mensagem}</Text>
       ) : (
         <FlatList
           data={filmes}
@@ -92,11 +93,9 @@ export function Buscar() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: darkTheme.background,
     paddingHorizontal: 20,
   },
   titulo: {
-    color: darkTheme.text,
     fontSize: 26,
     fontWeight: "bold",
     marginVertical: 20,
@@ -110,21 +109,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   botao: {
-    backgroundColor: darkTheme.primary,
     justifyContent: "center",
     paddingHorizontal: 18,
     borderRadius: 10,
     alignSelf: "stretch",
   },
   botaoTexto: {
-    color: darkTheme.white,
     fontWeight: "bold",
   },
   loading: {
     marginTop: 40,
   },
   mensagem: {
-    color: darkTheme.muted,
     fontSize: 16,
     marginTop: 30,
     textAlign: "center",

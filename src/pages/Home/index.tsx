@@ -21,12 +21,13 @@ import {
   buscarLancamentos,
   buscarMaisAvaliados,
 } from "../../data/tmdbV3";
-import { darkTheme } from "../../themes/themes";
+import { useTheme } from "../../contexts/ThemeContext";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 export function Home() {
   const navigation = useNavigation<Navigation>();
+  const { theme } = useTheme();
   const [populares, setPopulares] = useState<Filme[]>([]);
   const [avaliados, setAvaliados] = useState<Filme[]>([]);
   const [lancamentos, setLancamentos] = useState<Filme[]>([]);
@@ -59,7 +60,7 @@ export function Home() {
   }) {
     return (
       <View style={styles.secao}>
-        <Text style={styles.secaoTitulo}>{titulo}</Text>
+        <Text style={[styles.secaoTitulo, { color: theme.text }]}>{titulo}</Text>
 
         <FlatList
           data={filmes}
@@ -76,26 +77,26 @@ export function Home() {
 
   if (loading) {
     return (
-      <View style={styles.centralizado}>
-        <ActivityIndicator size="large" color="#A42618" />
+      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
 
   if (erro) {
     return (
-      <View style={styles.centralizado}>
-        <Text style={styles.erro}>{erro}</Text>
+      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+        <Text style={[styles.erro, { color: theme.primary }]}>{erro}</Text>
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={["top"]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.cabecalho}>
-          <Text style={styles.titulo}>CineApp</Text>
-          <Text style={styles.subtitulo}>
+          <Text style={[styles.titulo, { color: theme.text }]}>CineApp</Text>
+          <Text style={[styles.subtitulo, { color: theme.muted }]}>
             Descubra seus próximos filmes favoritos
           </Text>
         </View>
@@ -112,15 +113,15 @@ export function Home() {
               style={styles.banner}
               imageStyle={styles.bannerImagem}
             >
-              <View style={styles.sombra}>
+              <View style={[styles.sombra, { backgroundColor: theme.overlay }]}>
                 <View>
-                  <Text style={styles.destaqueTexto}>Em destaque</Text>
+                  <Text style={[styles.destaqueTexto, { color: theme.text }]}>Em destaque</Text>
 
-                  <Text style={styles.destaqueTitulo} numberOfLines={2}>
+                  <Text style={[styles.destaqueTitulo, { color: theme.white }]} numberOfLines={2}>
                     {destaque.title}
                   </Text>
 
-                  <Text style={styles.nota}>
+                  <Text style={[styles.nota, { color: theme.white }]}>
                     {destaque.vote_average.toFixed(1)}
                   </Text>
                 </View>
@@ -140,11 +141,9 @@ export function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#080405",
   },
   centralizado: {
     flex: 1,
-    backgroundColor: "#080405",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -153,12 +152,10 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   titulo: {
-    color: "#D5D7DC",
     fontSize: 30,
     fontWeight: "bold",
   },
   subtitulo: {
-    color: "#8990A4",
     fontSize: 16,
     marginTop: 6,
   },
@@ -173,23 +170,19 @@ const styles = StyleSheet.create({
   },
   sombra: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
     borderRadius: 16,
     justifyContent: "flex-end",
     padding: 20,
   },
   destaqueTexto: {
-    color: "#D5D7DC",
     fontSize: 14,
   },
   destaqueTitulo: {
-    color: "#FFFFFF",
     fontSize: 25,
     fontWeight: "bold",
     marginTop: 5,
   },
   nota: {
-    color: "#FFFFFF",
     fontSize: 16,
     marginTop: 8,
   },
@@ -197,7 +190,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   secaoTitulo: {
-    color: "#D5D7DC",
     fontSize: 21,
     fontWeight: "bold",
     marginBottom: 15,
@@ -207,7 +199,6 @@ const styles = StyleSheet.create({
     width: 16,
   },
   erro: {
-    color: darkTheme.primary,
     fontSize: 16,
   },
   lista: {

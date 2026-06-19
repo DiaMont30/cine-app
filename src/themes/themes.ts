@@ -11,3 +11,19 @@ export const darkTheme = {
   textSecondary: "#AAAAB5",
   border: "#30303A",
 };
+
+export const lightTheme = {
+  background: "#FFF9F8",
+  surface: "#F6EEEE",
+  card: "#FFFFFF",
+  primary: "#D95F67",
+  text: "#3D3342",
+  white: "#FFFFFF",
+  secondary: "#B8AEBB",
+  muted: "#7D7380",
+  overlay: "rgba(0, 0, 0, 0.45)",
+  textSecondary: "#7D7380",
+  border: "#E4D7D9",
+};
+
+export type Theme = typeof darkTheme;

@@ -3,9 +3,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Buscar } from "../pages/Buscar";
 import { Favoritos } from "../pages/Favoritos";
 import { Home } from "../pages/Home";
+import { useTheme } from "../contexts/ThemeContext";
 import { Perfil } from "../pages/Perfil";
-import { colors } from "../themes/colors";
-import { darkTheme } from "../themes/themes";
 
 export type TabParamList = {
   Inicio: undefined;
@@ -24,15 +23,17 @@ const icons = {
 } as const;
 
 export function TabRoutes() {
+  const { theme } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: darkTheme.primary,
-        tabBarInactiveTintColor: darkTheme.muted,
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.muted,
         tabBarStyle: {
-          backgroundColor: darkTheme.surface,
-          borderTopColor: darkTheme.surface,
+          backgroundColor: theme.surface,
+          borderTopColor: theme.surface,
         },
         tabBarIcon: ({ color, size }) => (
           <Ionicons name={icons[route.name]} color={color} size={size} />

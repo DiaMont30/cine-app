@@ -2,10 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Alert, Image, Pressable, StyleSheet, Text, View, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
-import { colors } from "../../themes/colors";
-
+import { useTheme } from "../../contexts/ThemeContext";
+import { SeletorTema } from "../../components/SeletorTema";
 export function Perfil() {
     const { usuario, signOut } = useAuth();
+    const { theme } = useTheme();
 
     async function sair() {
         Alert.alert(
@@ -27,15 +28,15 @@ export function Perfil() {
 
     if (!usuario) {
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
                 <View style={styles.centralizado}>
                     <Ionicons
                         name="person-circle-outline"
                         size={90}
-                        color={colors.muted}
+                        color={theme.muted}
                     />
 
-                    <Text style={styles.mensagem}>
+                    <Text style={[styles.mensagem, { color: theme.muted }]}>
                         Não foi possível carregar os dados do usuário.
                     </Text>
                 </View>
@@ -46,8 +47,8 @@ export function Perfil() {
     const nome = usuario.name || usuario.username;
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.titulo}>Meu perfil</Text>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+            <Text style={[styles.titulo, { color: theme.text }]}>Meu perfil</Text>
 
             <View style={styles.perfil}>
                 {usuario.avatarPath ? (
@@ -55,89 +56,94 @@ export function Perfil() {
                         source={{
                             uri: `https://image.tmdb.org/t/p/w185${usuario.avatarPath}`,
                         }}
-                        style={styles.avatar}
+                        style={[styles.avatar, { borderColor: theme.primary }]}
                     />
                 ) : (
-                    <View style={styles.avatarPadrao}>
+                    <View style={[styles.avatarPadrao, { backgroundColor: theme.surface, borderColor: theme.primary }]}>
                         <Ionicons
                             name="person-outline"
                             size={54}
-                            color={colors.text}
+                            color={theme.text}
                         />
                     </View>
                 )}
 
-                <Text style={styles.nome}>{nome}</Text>
-                <Text style={styles.usuario}>@{usuario.username}</Text>
+                <Text style={[styles.nome, { color: theme.text }]}>{nome}</Text>
+                <Text style={[styles.usuario, { color: theme.muted }]}>@{usuario.username}</Text>
             </View>
 
-            <View style={styles.card}>
+            <View style={[styles.card, { backgroundColor: theme.surface }]}>
                 <View style={styles.informacao}>
-                    <View style={styles.icone}>
+                    <View style={[styles.icone, { backgroundColor: theme.background }]}>
                         <Ionicons
                             name="language-outline"
                             size={22}
-                            color={colors.primary}
+                            color={theme.primary}
                         />
                     </View>
 
                     <View>
-                        <Text style={styles.rotulo}>Idioma</Text>
-                        <Text style={styles.valor}>
+                        <Text style={[styles.rotulo, { color: theme.muted }]}>Idioma</Text>
+                        <Text style={[styles.valor, { color: theme.text }]}>
                             {usuario.idioma || "Não informado"}
                         </Text>
                     </View>
                 </View>
 
-                <View style={styles.divisor} />
+                <View style={[styles.divisor, { backgroundColor: theme.secondary }]} />
 
                 <View style={styles.informacao}>
-                    <View style={styles.icone}>
+                    <View style={[styles.icone, { backgroundColor: theme.background }]}>
                         <Ionicons
                             name="location-outline"
                             size={22}
-                            color={colors.primary}
+                            color={theme.primary}
                         />
                     </View>
 
                     <View>
-                        <Text style={styles.rotulo}>Região</Text>
-                        <Text style={styles.valor}>
+                        <Text style={[styles.rotulo, { color: theme.muted }]}>Região</Text>
+                        <Text style={[styles.valor, { color: theme.text }]}>
                             {usuario.regiao || "Não informada"}
                         </Text>
                     </View>
                 </View>
 
-                <View style={styles.divisor} />
+                <View style={[styles.divisor, { backgroundColor: theme.secondary }]} />
 
                 <View style={styles.informacao}>
-                    <View style={styles.icone}>
+                    <View style={[styles.icone, { backgroundColor: theme.background }]}>
                         <Ionicons
                             name="id-card-outline"
                             size={22}
-                            color={colors.primary}
+                            color={theme.primary}
                         />
                     </View>
 
                     <View>
-                        <Text style={styles.rotulo}>Identificação da conta</Text>
-                        <Text style={styles.valor}>{usuario.id}</Text>
+                        <Text style={[styles.rotulo, { color: theme.muted }]}>Identificação da conta</Text>
+                        <Text style={[styles.valor, { color: theme.text }]}>{usuario.id}</Text>
                     </View>
                 </View>
+
+                <View style={[styles.divisor, { backgroundColor: theme.secondary }]} />
+
+                <SeletorTema />
             </View>
 
             <Pressable
                 style={({ pressed }) => [
                     styles.botao,
+                    { backgroundColor: theme.primary },
                     pressed && styles.botaoPressionado,
                 ]}
                 onPress={sair}
             >
-                <Ionicons name="log-out-outline" size={22} color={colors.white} />
-                <Text style={styles.botaoTexto}>Sair da conta</Text>
+                <Ionicons name="log-out-outline" size={22} color={theme.white} />
+                <Text style={[styles.botaoTexto, { color: theme.white }]}>Sair da conta</Text>
             </Pressable>
 
-            <Text style={styles.creditos}>
+            <Text style={[styles.creditos, { color: theme.muted }]}>
                 Este produto utiliza a API da TMDB, mas não é endossado ou certificado
                 pela TMDB.
             </Text>
@@ -145,11 +151,9 @@ export function Perfil() {
     );
 }
 
-/*gente, quando o thiago entrar com as cores eu vou refatorar isso aqui pra puxar de themes */
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.background,
         paddingHorizontal: 20,
     },
     centralizado: {
@@ -158,7 +162,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     titulo: {
-        color: colors.text,
         fontSize: 26,
         fontWeight: "bold",
         marginVertical: 20,
@@ -172,31 +175,25 @@ const styles = StyleSheet.create({
         height: 110,
         borderRadius: 55,
         borderWidth: 3,
-        borderColor: colors.primary,
     },
     avatarPadrao: {
         width: 110,
         height: 110,
         borderRadius: 55,
-        backgroundColor: colors.surface,
         borderWidth: 3,
-        borderColor: colors.primary,
         alignItems: "center",
         justifyContent: "center",
     },
     nome: {
-        color: colors.text,
         fontSize: 23,
         fontWeight: "bold",
         marginTop: 16,
     },
     usuario: {
-        color: colors.muted,
         fontSize: 16,
         marginTop: 4,
     },
     card: {
-        backgroundColor: colors.surface,
         borderRadius: 16,
         paddingHorizontal: 18,
     },
@@ -209,27 +206,22 @@ const styles = StyleSheet.create({
         width: 42,
         height: 42,
         borderRadius: 21,
-        backgroundColor: colors.background,
         alignItems: "center",
         justifyContent: "center",
         marginRight: 14,
     },
     rotulo: {
-        color: colors.muted,
         fontSize: 13,
     },
     valor: {
-        color: colors.text,
         fontSize: 16,
         marginTop: 3,
     },
     divisor: {
         height: 1,
-        backgroundColor: colors.secondary,
         opacity: 0.4,
     },
     botao: {
-        backgroundColor: colors.primary,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
@@ -242,18 +234,15 @@ const styles = StyleSheet.create({
         opacity: 0.8,
     },
     botaoTexto: {
-        color: colors.white,
         fontSize: 16,
         fontWeight: "bold",
     },
     mensagem: {
-        color: colors.muted,
         fontSize: 16,
         textAlign: "center",
         marginTop: 16,
     },
     creditos: {
-        color: colors.muted,
         fontSize: 12,
         lineHeight: 18,
         textAlign: "center",

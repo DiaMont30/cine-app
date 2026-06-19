@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { darkTheme } from "../../themes/themes";
+import { useTheme } from "../../contexts/ThemeContext";
 
 type InputProps = TextInputProps & {
   label?: string;
@@ -25,17 +25,22 @@ export function Input({
   ...rest
 }: InputProps) {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <View style={containerStyle}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: theme.text }]}>{label}</Text>}
 
       <View
-        style={[styles.inputContainer, erro ? styles.inputContainerErro : null]}
+        style={[
+          styles.inputContainer,
+          { backgroundColor: theme.surface, borderColor: theme.border },
+          erro ? [styles.inputContainerErro, { borderColor: theme.primary }] : null
+        ]}
       >
         <TextInput
-          style={styles.input}
-          placeholderTextColor={darkTheme.muted}
+          style={[styles.input, { color: theme.text }]}
+          placeholderTextColor={theme.muted}
           secureTextEntry={senha && !senhaVisivel}
           autoCapitalize="none"
           autoCorrect={false}
@@ -52,43 +57,37 @@ export function Input({
             <Feather
               name={senhaVisivel ? "eye-off" : "eye"}
               size={20}
-              color={darkTheme.muted}
+              color={theme.muted}
             />
           </TouchableOpacity>
         )}
       </View>
 
-      {erro && <Text style={styles.textoErro}>{erro}</Text>}
+      {erro && <Text style={[styles.textoErro, { color: theme.primary }]}>{erro}</Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   label: {
-    color: darkTheme.text,
     fontSize: 14,
     marginBottom: 6,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: darkTheme.surface,
     borderRadius: 8,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: darkTheme.secondary,
   },
   inputContainerErro: {
-    borderColor: darkTheme.primary,
   },
   input: {
     flex: 1,
-    color: darkTheme.white,
     fontSize: 16,
     paddingVertical: 12,
   },
   textoErro: {
-    color: darkTheme.primary,
     fontSize: 12,
     marginTop: 4,
   },

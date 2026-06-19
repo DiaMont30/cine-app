@@ -13,14 +13,14 @@ import { useFavoritos } from "../../contexts/FavoritosContext";
 import { RootStackParamList } from "../../routes/StackRoutes";
 import { FilmeDetalhes } from "../../domains/entities/Filme";
 import { buscarDetalhesFilme, buscarImagem } from "../../data/tmdbV3";
-
-
+import { useTheme } from "../../contexts/ThemeContext";
 type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
   const [erro, setErro] = useState("");
   const { alternarFavorito, estaFavorito } = useFavoritos();
+  const { theme } = useTheme();
 
   useEffect(() => {
     buscarDetalhesFilme(route.params.id)
@@ -30,16 +30,16 @@ export function Detalhes({ route, navigation }: Props) {
 
   if (erro) {
     return (
-      <View style={styles.centralizado}>
-        <Text style={styles.erro}>{erro}</Text>
+      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+        <Text style={[styles.erro, { color: theme.primary }]}>{erro}</Text>
       </View>
     );
   }
 
   if (!filme) {
     return (
-      <View style={styles.centralizado}>
-        <ActivityIndicator size="large" color="#A42618" />
+      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -52,7 +52,7 @@ export function Detalhes({ route, navigation }: Props) {
   const favorito = estaFavorito(filme.id);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       {filme.backdrop_path && (
         <Image
           source={{ uri: buscarImagem(filme.backdrop_path, "w780") }}
@@ -62,7 +62,7 @@ export function Detalhes({ route, navigation }: Props) {
 
       <View style={styles.conteudo}>
         <Pressable onPress={() => navigation.goBack()}>
-          <Text style={styles.voltar}>‹ Voltar</Text>
+          <Text style={[styles.voltar, { color: theme.text }]}>‹ Voltar</Text>
         </Pressable>
 
         <View style={styles.informacoes}>
@@ -74,21 +74,21 @@ export function Detalhes({ route, navigation }: Props) {
           )}
 
           <View style={styles.resumo}>
-            <Text style={styles.titulo}>{filme.title}</Text>
-            <Text style={styles.nota}>
+            <Text style={[styles.titulo, { color: theme.text }]}>{filme.title}</Text>
+            <Text style={[styles.nota, { color: theme.primary }]}>
               ★ {filme.vote_average.toFixed(1)}
             </Text>
-            <Text style={styles.texto}>{ano}</Text>
-            <Text style={styles.texto}>{duracao}</Text>
+            <Text style={[styles.texto, { color: theme.muted }]}>{ano}</Text>
+            <Text style={[styles.texto, { color: theme.muted }]}>{duracao}</Text>
           </View>
         </View>
 
-        <Text style={styles.generos}>
+        <Text style={[styles.generos, { color: theme.muted }]}>
           {filme.genres.map((genero) => genero.name).join(" • ")}
         </Text>
 
         <Pressable
-          style={[styles.botao, favorito && styles.botaoAtivo]}
+          style={[styles.botao, { backgroundColor: theme.primary }, favorito && { backgroundColor: theme.secondary }]}
           onPress={() => alternarFavorito(filme)}
         >
           <Text style={styles.botaoTexto}>
@@ -96,9 +96,9 @@ export function Detalhes({ route, navigation }: Props) {
           </Text>
         </Pressable>
 
-        <Text style={styles.subtitulo}>Sinopse</Text>
+        <Text style={[styles.subtitulo, { color: theme.text }]}>Sinopse</Text>
 
-        <Text style={styles.sinopse}>
+        <Text style={[styles.sinopse, { color: theme.text }]}>
           {filme.overview || "Sinopse não disponível."}
         </Text>
       </View>
@@ -109,11 +109,9 @@ export function Detalhes({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#080405",
   },
   centralizado: {
     flex: 1,
-    backgroundColor: "#080405",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -125,7 +123,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   voltar: {
-    color: "#D5D7DC",
     fontSize: 17,
     marginBottom: 20,
   },
@@ -143,34 +140,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   titulo: {
-    color: "#D5D7DC",
     fontSize: 25,
     fontWeight: "bold",
   },
   nota: {
-    color: "#A42618",
     fontSize: 17,
     marginVertical: 10,
   },
   texto: {
-    color: "#8990A4",
     fontSize: 15,
     marginTop: 5,
   },
   generos: {
-    color: "#8990A4",
     fontSize: 15,
     marginTop: 20,
   },
   botao: {
-    backgroundColor: "#A42618",
     alignItems: "center",
     padding: 14,
     borderRadius: 10,
     marginTop: 24,
   },
   botaoAtivo: {
-    backgroundColor: "#55585B",
   },
   botaoTexto: {
     color: "#FFFFFF",
@@ -178,20 +169,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   subtitulo: {
-    color: "#D5D7DC",
     fontSize: 21,
     fontWeight: "bold",
     marginTop: 28,
     marginBottom: 10,
   },
   sinopse: {
-    color: "#D5D7DC",
     fontSize: 16,
     lineHeight: 24,
     paddingBottom: 30,
   },
   erro: {
-    color: "#A42618",
     fontSize: 16,
   }
 });
