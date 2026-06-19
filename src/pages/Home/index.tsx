@@ -12,7 +12,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as colors from "../../themes/colors";
 import { CardFilme } from "../../components/CardFilme";
 import { RootStackParamList } from "../../routes/StackRoutes";
 import {
@@ -22,6 +21,7 @@ import {
   buscarMaisAvaliados,
   Filme,
 } from "../../services/api";
+import { darkTheme } from "../../themes/themes";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     width: 16,
   },
   erro: {
-    color: colors.colors.primary,
+    color: darkTheme.primary,
     fontSize: 16,
   },
   lista: {
