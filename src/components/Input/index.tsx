@@ -22,6 +22,7 @@ export function Input({
   erro,
   senha = false,
   containerStyle,
+  style,
   ...rest
 }: InputProps) {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
@@ -43,7 +44,7 @@ export function Input({
         ]}
       >
         <TextInput
-          style={[styles.input, { color: theme.text }]}
+          style={[styles.input, { color: theme.text }, style]}
           placeholderTextColor={theme.muted}
           secureTextEntry={senha && !senhaVisivel}
           autoCapitalize="none"
