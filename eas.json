@@ -15,6 +15,7 @@
       },
       "env": {
         "EXPO_PUBLIC_TMDB_TOKEN": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ODg0ZDFjZGIxNzkxM2MwZmE5MGRmMTg2NWJlZGU1OSIsIm5iZiI6MTc4MTY1MDY4OC4yNDk5OTk4LCJzdWIiOiI2YTMxZDUwMDM5YTk4YjVkZmRiMzgwYjAiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.8CNiMRLdVR_wUkOM2SKfV33jQprT8J65uUIn7qDjrE8"
+      }
     },
     "production": {
       "autoIncrement": true
@@ -23,4 +24,4 @@
   "submit": {
     "production": {}
   }
-} }
+}
