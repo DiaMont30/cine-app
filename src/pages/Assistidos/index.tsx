@@ -12,14 +12,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-    buscarListaAssistidosId,
-    salvarListaAssistidosId,
-} from "../../data/storage";
+import { obterListaAssistidosId } from "../../data/storage";
 import {
     buscarFilmesAssistidos,
-    buscarListasUsuario,
-    criarListaAssistidos,
     removerFilmeAssistido,
 } from "../../data/tmdbV3";
 import { Filme } from "../../domains/entities/Filme";
@@ -44,24 +39,7 @@ export function Assistidos() {
             setLoading(true);
             setErro("");
 
-            let idLista = await buscarListaAssistidosId();
-
-            if (!idLista) {
-                const listas = await buscarListasUsuario(usuario.id, sessionId);
-
-                const listaExistente = listas.find(
-                    (lista) => lista.name === "CineApp - Filmes Assistidos",
-                );
-
-                idLista = listaExistente?.id ?? null;
-
-                if (!idLista) {
-                    idLista = await criarListaAssistidos(sessionId);
-                }
-
-                await salvarListaAssistidosId(idLista);
-            }
-
+            const idLista = await obterListaAssistidosId(usuario.id, sessionId);
             const resultado = await buscarFilmesAssistidos(idLista);
 
             setListId(idLista);
