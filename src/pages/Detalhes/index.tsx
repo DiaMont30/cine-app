@@ -14,6 +14,8 @@ import { RootStackParamList } from "../../routes/StackRoutes";
 import { FilmeDetalhes } from "../../domains/entities/Filme";
 import { buscarDetalhesFilme, buscarImagem } from "../../data/tmdbV3";
 import { useTheme } from "../../contexts/ThemeContext";
+import { ActionButton } from "../../components/ActionButton";
+
 type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
@@ -30,7 +32,9 @@ export function Detalhes({ route, navigation }: Props) {
 
   if (erro) {
     return (
-      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+      <View
+        style={[styles.centralizado, { backgroundColor: theme.background }]}
+      >
         <Text style={[styles.erro, { color: theme.primary }]}>{erro}</Text>
       </View>
     );
@@ -38,7 +42,9 @@ export function Detalhes({ route, navigation }: Props) {
 
   if (!filme) {
     return (
-      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+      <View
+        style={[styles.centralizado, { backgroundColor: theme.background }]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
@@ -52,7 +58,9 @@ export function Detalhes({ route, navigation }: Props) {
   const favorito = estaFavorito(filme.id);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       {filme.backdrop_path && (
         <Image
           source={{ uri: buscarImagem(filme.backdrop_path, "w780") }}
@@ -74,12 +82,16 @@ export function Detalhes({ route, navigation }: Props) {
           )}
 
           <View style={styles.resumo}>
-            <Text style={[styles.titulo, { color: theme.text }]}>{filme.title}</Text>
+            <Text style={[styles.titulo, { color: theme.text }]}>
+              {filme.title}
+            </Text>
             <Text style={[styles.nota, { color: theme.primary }]}>
               ★ {filme.vote_average.toFixed(1)}
             </Text>
             <Text style={[styles.texto, { color: theme.muted }]}>{ano}</Text>
-            <Text style={[styles.texto, { color: theme.muted }]}>{duracao}</Text>
+            <Text style={[styles.texto, { color: theme.muted }]}>
+              {duracao}
+            </Text>
           </View>
         </View>
 
@@ -87,14 +99,16 @@ export function Detalhes({ route, navigation }: Props) {
           {filme.genres.map((genero) => genero.name).join(" • ")}
         </Text>
 
-        <Pressable
-          style={[styles.botao, { backgroundColor: theme.primary }, favorito && { backgroundColor: theme.secondary }]}
+        <ActionButton
+          titulo={
+            favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"
+          }
           onPress={() => alternarFavorito(filme)}
-        >
-          <Text style={styles.botaoTexto}>
-            {favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-          </Text>
-        </Pressable>
+          containerStyle={[
+            styles.botaoMargin,
+            favorito && { backgroundColor: theme.secondary },
+          ]}
+        />
 
         <Text style={[styles.subtitulo, { color: theme.text }]}>Sinopse</Text>
 
@@ -155,18 +169,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 20,
   },
-  botao: {
-    alignItems: "center",
-    padding: 14,
-    borderRadius: 10,
+  botaoMargin: {
     marginTop: 24,
-  },
-  botaoAtivo: {
-  },
-  botaoTexto: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: "bold",
   },
   subtitulo: {
     fontSize: 21,
@@ -181,5 +185,5 @@ const styles = StyleSheet.create({
   },
   erro: {
     fontSize: 16,
-  }
+  },
 });

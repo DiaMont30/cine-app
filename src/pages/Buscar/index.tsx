@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   StyleSheet,
   Text,
   View,
@@ -13,7 +12,7 @@ import { Input } from "../../components/Input";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Filme } from "../../domains/entities/Filme";
 import { buscarFilmes } from "../../data/tmdbV3";
-
+import { ActionButton } from "../../components/ActionButton";
 
 export function Buscar() {
   const { theme } = useTheme();
@@ -49,12 +48,15 @@ export function Buscar() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <Text style={[styles.titulo, { color: theme.text }]}>Buscar filmes</Text>
 
       <View style={styles.busca}>
         <Input
           containerStyle={styles.input}
+          style={styles.alturaInput}
           placeholder="Digite o nome de um filme"
           value={busca}
           onChangeText={setBusca}
@@ -62,9 +64,12 @@ export function Buscar() {
           returnKeyType="search"
         />
 
-        <Pressable style={[styles.botao, { backgroundColor: theme.primary }]} onPress={pesquisar}>
-          <Text style={[styles.botaoTexto, { color: theme.white }]}>Buscar</Text>
-        </Pressable>
+        <ActionButton
+          titulo="Buscar"
+          onPress={pesquisar}
+          disabled={loading}
+          containerStyle={styles.botao}
+        />
       </View>
 
       {loading ? (
@@ -74,7 +79,9 @@ export function Buscar() {
           color={theme.primary}
         />
       ) : mensagem ? (
-        <Text style={[styles.mensagem, { color: theme.muted }]}>{mensagem}</Text>
+        <Text style={[styles.mensagem, { color: theme.muted }]}>
+          {mensagem}
+        </Text>
       ) : (
         <FlatList
           data={filmes}
@@ -102,20 +109,19 @@ const styles = StyleSheet.create({
   },
   busca: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: 10,
   },
   input: {
     flex: 1,
   },
-  botao: {
-    justifyContent: "center",
-    paddingHorizontal: 18,
-    borderRadius: 10,
-    alignSelf: "stretch",
+  alturaInput: {
+    height: 50,
   },
-  botaoTexto: {
-    fontWeight: "bold",
+  botao: {
+    width: "auto",
+    paddingHorizontal: 24,
+    height: 50,
   },
   loading: {
     marginTop: 40,
