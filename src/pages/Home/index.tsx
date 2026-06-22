@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -20,10 +20,10 @@ import {
   buscarMaisAvaliados,
 } from "../../data/tmdbV3";
 import { Filme } from "../../domains/entities/Filme";
-import { RootStackParamList } from "../../routes/StackRoutes";
+import { TabParamList } from "../../routes/TabRoutes";
 import { styles } from "./styles";
 
-type Navigation = NativeStackNavigationProp<RootStackParamList>;
+type Navigation = BottomTabNavigationProp<TabParamList>;
 
 export function Home() {
   const navigation = useNavigation<Navigation>();

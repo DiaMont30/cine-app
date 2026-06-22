@@ -2,7 +2,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { useAuth } from "../contexts/AuthContext";
 import { AuthRoutes } from "./AuthRoutes";
-import { StackRoutes } from "./StackRoutes";
+import { TabRoutes } from "./TabRoutes";
 import { darkTheme } from "../themes/themes";
 
 export function AppRoutes() {
@@ -16,7 +16,7 @@ export function AppRoutes() {
     );
   }
 
-  return signed ? <StackRoutes /> : <AuthRoutes />;
+  return signed ? <TabRoutes /> : <AuthRoutes />;
 }
 
 const styles = StyleSheet.create({
