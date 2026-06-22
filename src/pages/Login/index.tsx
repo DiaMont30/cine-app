@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, Platform, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -7,6 +7,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { usePosteresDestaque } from "../../utils/hooks/usePosterDestaque";
 import { PosterGrid } from "../../components/PosterGrid";
 import { ActionButton } from "../../components/ActionButton";
+import { styles } from "./styles";
 
 export function Login() {
   const { signIn } = useAuth();
@@ -57,31 +58,3 @@ export function Login() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  conteudo: {
-    flex: 1,
-    alignItems: "center",
-    paddingHorizontal: 32,
-  },
-  logo: {
-    width: 300,
-    height: Platform.OS === "web" ? 300 : 200,
-  },
-  descricao: {
-    fontSize: 15,
-    textAlign: "center",
-    lineHeight: 22,
-    maxWidth: 280,
-    marginBottom: 30,
-  },
-  creditos: {
-    fontSize: 11,
-    textAlign: "center",
-    marginTop: 24,
-    paddingHorizontal: 16,
-  },
-});
