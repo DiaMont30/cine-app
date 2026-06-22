@@ -6,6 +6,7 @@ import { Buscar } from "../pages/Buscar";
 import { Favoritos } from "../pages/Favoritos";
 import { Home } from "../pages/Home";
 import { Perfil } from "../pages/Perfil";
+import { Detalhes } from "../pages/Detalhes";
 
 export type TabParamList = {
   Inicio: undefined;
@@ -13,6 +14,7 @@ export type TabParamList = {
   Favoritos: undefined;
   Assistidos: undefined;
   Perfil: undefined;
+  Detalhes: { id: number };
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -23,6 +25,7 @@ const icons = {
   Favoritos: "heart-outline",
   Assistidos: "checkmark-circle-outline",
   Perfil: "person-outline",
+  Detalhes: "information-circle-outline",
 } as const;
 
 export function TabRoutes() {
@@ -56,6 +59,10 @@ export function TabRoutes() {
       <Tab.Screen name="Assistidos" component={Assistidos} />
 
       <Tab.Screen name="Perfil" component={Perfil} />
+
+      <Tab.Screen name="Detalhes" component={Detalhes} options={{
+        tabBarButton: () => null,
+        tabBarItemStyle: { display: 'none' } }} />
     </Tab.Navigator>
   );
 }

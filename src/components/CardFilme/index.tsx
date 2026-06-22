@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { Image, Pressable, Text, View } from "react-native";
-import { RootStackParamList } from "../../routes/StackRoutes";
+import { TabParamList } from "../../routes/TabRoutes";
 import { Filme } from "../../domains/entities/Filme";
 import { buscarImagem } from "../../data/tmdbV3";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -11,7 +11,7 @@ type Props = {
   filme: Filme;
 };
 
-type Navigation = NativeStackNavigationProp<RootStackParamList>;
+type Navigation = BottomTabNavigationProp<TabParamList>;
 
 export function CardFilme({ filme }: Props) {
   const navigation = useNavigation<Navigation>();

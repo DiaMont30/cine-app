@@ -51,3 +51,30 @@ export async function buscarListaAssistidosId(): Promise<number | null> {
 
   return listId ? Number(listId) : null;
 }
+
+export async function obterListaAssistidosId(
+  accountId: number,
+  sessionId: string,
+): Promise<number> {
+  let idLista = await buscarListaAssistidosId();
+
+  if (!idLista) {
+    const { buscarListasUsuario, criarListaAssistidos } = await import("./tmdbV3");
+
+    const listas = await buscarListasUsuario(accountId, sessionId);
+
+    const listaExistente = listas.find(
+      (lista) => lista.name === "CineApp - Filmes Assistidos",
+    );
+
+    idLista = listaExistente?.id ?? null;
+
+    if (!idLista) {
+      idLista = await criarListaAssistidos(sessionId);
+    }
+
+    await salvarListaAssistidosId(idLista);
+  }
+
+  return idLista;
+}

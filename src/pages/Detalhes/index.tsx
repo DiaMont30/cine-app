@@ -1,5 +1,6 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { useFocusEffect } from "@react-navigation/native";
+import { useEffect, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -13,24 +14,19 @@ import { ActionButton } from "../../components/ActionButton";
 import { useAuth } from "../../contexts/AuthContext";
 import { useFavoritos } from "../../contexts/FavoritosContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  buscarListaAssistidosId,
-  salvarListaAssistidosId,
-} from "../../data/storage";
+import { obterListaAssistidosId } from "../../data/storage";
 import {
   adicionarFilmeAssistido,
   buscarDetalhesFilme,
   buscarFilmesAssistidos,
   buscarImagem,
-  buscarListasUsuario,
-  criarListaAssistidos,
   removerFilmeAssistido,
 } from "../../data/tmdbV3";
 import { FilmeDetalhes } from "../../domains/entities/Filme";
-import { RootStackParamList } from "../../routes/StackRoutes";
+import { TabParamList } from "../../routes/TabRoutes";
 import { styles } from "./styles";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
+type Props = BottomTabScreenProps<TabParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
@@ -49,44 +45,29 @@ export function Detalhes({ route, navigation }: Props) {
       .catch(() => setErro("Não foi possível carregar o filme."));
   }, [route.params.id]);
 
-  useEffect(() => {
-    async function verificarAssistido() {
-      if (!usuario || !sessionId) {
-        return;
-      }
-
-      try {
-        let idLista = await buscarListaAssistidosId();
-
-        if (!idLista) {
-          const listas = await buscarListasUsuario(usuario.id, sessionId);
-
-          const listaExistente = listas.find(
-            (lista) => lista.name === "CineApp - Filmes Assistidos",
-          );
-
-          idLista = listaExistente?.id ?? null;
-
-          if (!idLista) {
-            idLista = await criarListaAssistidos(sessionId);
-          }
-
-          await salvarListaAssistidosId(idLista);
+  useFocusEffect(
+    useCallback(() => {
+      async function verificarAssistido() {
+        if (!usuario || !sessionId) {
+          return;
         }
 
-        const filmesAssistidos = await buscarFilmesAssistidos(idLista);
+        try {
+          const idLista = await obterListaAssistidosId(usuario.id, sessionId);
+          const filmesAssistidos = await buscarFilmesAssistidos(idLista);
 
-        setListId(idLista);
-        setAssistido(
-          filmesAssistidos.some((item) => item.id === route.params.id),
-        );
-      } catch (error) {
-        console.error("[Detalhes] verificarAssistido:", error);
+          setListId(idLista);
+          setAssistido(
+            filmesAssistidos.some((item) => item.id === route.params.id),
+          );
+        } catch (error) {
+          console.error("[Detalhes] verificarAssistido:", error);
+        }
       }
-    }
 
-    verificarAssistido();
-  }, [route.params.id, sessionId, usuario]);
+      verificarAssistido();
+    }, [route.params.id, sessionId, usuario])
+  );
 
   async function alternarAssistido() {
     if (!filme || !sessionId || !listId) {
