@@ -5,7 +5,6 @@ import {
     Alert,
     FlatList,
     Pressable,
-    StyleSheet,
     Text,
     View,
 } from "react-native";
@@ -14,16 +13,17 @@ import { CardFilme } from "../../components/CardFilme";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import {
+    buscarListaAssistidosId,
+    salvarListaAssistidosId,
+} from "../../data/storage";
+import {
     buscarFilmesAssistidos,
     buscarListasUsuario,
     criarListaAssistidos,
     removerFilmeAssistido,
 } from "../../data/tmdbV3";
-import {
-    buscarListaAssistidosId,
-    salvarListaAssistidosId,
-} from "../../data/storage";
 import { Filme } from "../../domains/entities/Filme";
+import { styles } from "./styles";
 
 export function Assistidos() {
     const { usuario, sessionId } = useAuth();
@@ -48,6 +48,7 @@ export function Assistidos() {
 
             if (!idLista) {
                 const listas = await buscarListasUsuario(usuario.id, sessionId);
+
                 const listaExistente = listas.find(
                     (lista) => lista.name === "CineApp - Filmes Assistidos",
                 );
@@ -80,7 +81,9 @@ export function Assistidos() {
     );
 
     async function removerFilme(filme: Filme) {
-        if (!listId || !sessionId) return;
+        if (!listId || !sessionId) {
+            return;
+        }
 
         Alert.alert(
             "Remover filme",
@@ -96,6 +99,7 @@ export function Assistidos() {
                     onPress: async () => {
                         try {
                             await removerFilmeAssistido(listId, filme.id, sessionId);
+
                             setFilmes((atuais) =>
                                 atuais.filter((item) => item.id !== filme.id),
                             );
@@ -114,10 +118,7 @@ export function Assistidos() {
     if (loading) {
         return (
             <View
-                style={[
-                    styles.centralizado,
-                    { backgroundColor: theme.background },
-                ]}
+                style={[styles.centralizado, { backgroundColor: theme.background }]}
             >
                 <ActivityIndicator size="large" color={theme.primary} />
             </View>
@@ -184,52 +185,3 @@ export function Assistidos() {
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: 20,
-    },
-    titulo: {
-        fontSize: 26,
-        fontWeight: "bold",
-        marginVertical: 20,
-    },
-    centralizado: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: 20,
-    },
-    mensagem: {
-        fontSize: 16,
-        textAlign: "center",
-    },
-    lista: {
-        paddingBottom: 24,
-    },
-    colunas: {
-        justifyContent: "space-between",
-        marginBottom: 20,
-    },
-    item: {
-        alignItems: "center",
-    },
-    botaoRemover: {
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingVertical: 8,
-        paddingHorizontal: 18,
-        marginTop: 8,
-    },
-    botaoTentar: {
-        borderRadius: 10,
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        marginTop: 18,
-    },
-    botaoTexto: {
-        fontSize: 15,
-        fontWeight: "bold",
-    },
-});

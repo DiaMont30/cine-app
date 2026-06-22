@@ -6,14 +6,17 @@ import {
   Image,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
+import { ActionButton } from "../../components/ActionButton";
 import { useAuth } from "../../contexts/AuthContext";
 import { useFavoritos } from "../../contexts/FavoritosContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import { ActionButton } from "../../components/ActionButton";
+import {
+  buscarListaAssistidosId,
+  salvarListaAssistidosId,
+} from "../../data/storage";
 import {
   adicionarFilmeAssistido,
   buscarDetalhesFilme,
@@ -23,19 +26,15 @@ import {
   criarListaAssistidos,
   removerFilmeAssistido,
 } from "../../data/tmdbV3";
-import {
-  buscarListaAssistidosId,
-  salvarListaAssistidosId,
-} from "../../data/storage";
 import { FilmeDetalhes } from "../../domains/entities/Filme";
 import { RootStackParamList } from "../../routes/StackRoutes";
+import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
   const [erro, setErro] = useState("");
-
   const [assistido, setAssistido] = useState(false);
   const [listId, setListId] = useState<number | null>(null);
   const [alterandoAssistido, setAlterandoAssistido] = useState(false);
@@ -185,6 +184,7 @@ export function Detalhes({ route, navigation }: Props) {
             </Text>
 
             <Text style={[styles.texto, { color: theme.muted }]}>{ano}</Text>
+
             <Text style={[styles.texto, { color: theme.muted }]}>
               {duracao}
             </Text>
@@ -227,74 +227,3 @@ export function Detalhes({ route, navigation }: Props) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centralizado: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  banner: {
-    width: "100%",
-    height: 230,
-  },
-  conteudo: {
-    padding: 20,
-  },
-  voltar: {
-    fontSize: 17,
-    marginBottom: 20,
-  },
-  informacoes: {
-    flexDirection: "row",
-    gap: 18,
-  },
-  poster: {
-    width: 130,
-    height: 195,
-    borderRadius: 12,
-  },
-  resumo: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  titulo: {
-    fontSize: 25,
-    fontWeight: "bold",
-  },
-  nota: {
-    fontSize: 17,
-    marginVertical: 10,
-  },
-  texto: {
-    fontSize: 15,
-    marginTop: 5,
-  },
-  generos: {
-    fontSize: 15,
-    marginTop: 20,
-  },
-  botaoMargin: {
-    marginTop: 24,
-  },
-  botaoAssistidoMargin: {
-    marginTop: 12,
-  },
-  subtitulo: {
-    fontSize: 21,
-    fontWeight: "bold",
-    marginTop: 28,
-    marginBottom: 10,
-  },
-  sinopse: {
-    fontSize: 16,
-    lineHeight: 24,
-    paddingBottom: 30,
-  },
-  erro: {
-    fontSize: 16,
-  },
-});
