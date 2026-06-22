@@ -1,9 +1,15 @@
-import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import * as WebBrowser from "expo-web-browser";
 import { Usuario } from "../domains/entities/Usuario";
 import { buscarContaLogada, criarRequestToken, criarSessao } from "./tmdbV3";
 
-const REDIRECT_URI = Linking.createURL("auth");
+
+WebBrowser.maybeCompleteAuthSession();
+
+
+
+
+const REDIRECT_URI = Linking.createURL("auth", { scheme: "cineapp" });
 
 const urlAprovacao = (token: string) =>
   `https://www.themoviedb.org/authenticate/${token}?redirect_to=${REDIRECT_URI}`;
@@ -33,7 +39,7 @@ export async function executarSignIn(): Promise<ResultadoSignIn | null> {
     id: conta.id,
     username: conta.username,
     name: conta.name,
-    avatarPath: conta.avatar.tmdb.avatar_path,
+    avatarPath: conta.avatar.tmdb?.avatar_path,
     idioma: conta.iso_639_1,
     regiao: conta.iso_3166_1,
   };
