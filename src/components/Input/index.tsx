@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  StyleSheet,
   Text,
   TextInput,
   TextInputProps,
@@ -9,6 +8,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "../../contexts/ThemeContext";
+import { styles } from "./styles";
 
 type InputProps = TextInputProps & {
   label?: string;
@@ -22,6 +22,7 @@ export function Input({
   erro,
   senha = false,
   containerStyle,
+  style,
   ...rest
 }: InputProps) {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
@@ -29,17 +30,21 @@ export function Input({
 
   return (
     <View style={containerStyle}>
-      {label && <Text style={[styles.label, { color: theme.text }]}>{label}</Text>}
+      {label && (
+        <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
+      )}
 
       <View
         style={[
           styles.inputContainer,
           { backgroundColor: theme.surface, borderColor: theme.border },
-          erro ? [styles.inputContainerErro, { borderColor: theme.primary }] : null
+          erro
+            ? [styles.inputContainerErro, { borderColor: theme.primary }]
+            : null,
         ]}
       >
         <TextInput
-          style={[styles.input, { color: theme.text }]}
+          style={[styles.input, { color: theme.text }, style]}
           placeholderTextColor={theme.muted}
           secureTextEntry={senha && !senhaVisivel}
           autoCapitalize="none"
@@ -63,32 +68,9 @@ export function Input({
         )}
       </View>
 
-      {erro && <Text style={[styles.textoErro, { color: theme.primary }]}>{erro}</Text>}
+      {erro && (
+        <Text style={[styles.textoErro, { color: theme.primary }]}>{erro}</Text>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    marginBottom: 6,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-  },
-  inputContainerErro: {
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    paddingVertical: 12,
-  },
-  textoErro: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-});
