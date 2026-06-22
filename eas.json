@@ -1,0 +1,27 @@
+{
+  "cli": {
+    "version": ">= 20.3.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_TMDB_TOKEN": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNmFlNDI4MGZmNjliNGI0OTIzZThjMzRjNDc0ZDkxZCIsIm5iZiI6MTc4MTY1MTgwMS44NzEsInN1YiI6IjZhMzFkOTU5ZTcyOTFkYTYzNDExMTQzYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Rmo-QMxak4wrJx_rlm-JBjmnBBGZ8k6JuziRaei_hqI"
+      }
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
