@@ -1,19 +1,12 @@
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Image, Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { usePosteresDestaque } from "../../utils/hooks/usePosterDestaque";
 import { PosterGrid } from "../../components/PosterGrid";
+import { ActionButton } from "../../components/ActionButton";
 
 export function Login() {
   const { signIn } = useAuth();
@@ -48,26 +41,13 @@ export function Login() {
           e acompanhar lançamentos.
         </Text>
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.botao,
-            { backgroundColor: theme.primary },
-            pressed && styles.botaoPressionado,
-            entrando && styles.botaoDesabilitado,
-          ]}
+        <ActionButton
+          titulo="Entrar com TMDB"
           onPress={handleEntrar}
-          disabled={entrando}
+          carregando={entrando}
           accessibilityRole="button"
           accessibilityLabel="Entrar com sua conta TMDB"
-        >
-          {entrando ? (
-            <ActivityIndicator color={theme.white} />
-          ) : (
-            <Text style={[styles.botaoTexto, { color: theme.white }]}>
-              Entrar com TMDB
-            </Text>
-          )}
-        </Pressable>
+        />
 
         <Text style={[styles.creditos, { color: theme.muted }]}>
           Este produto usa a API do TMDB, mas não é endossado ou certificado
@@ -96,24 +76,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 22,
     maxWidth: 280,
-    marginBottom: 40,
-  },
-  botao: {
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 10,
-    width: "100%",
-    alignItems: "center",
-  },
-  botaoPressionado: {
-    opacity: 0.85,
-  },
-  botaoDesabilitado: {
-    opacity: 0.7,
-  },
-  botaoTexto: {
-    fontSize: 16,
-    fontWeight: "bold",
+    marginBottom: 30,
   },
   creditos: {
     fontSize: 11,

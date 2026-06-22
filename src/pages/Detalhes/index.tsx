@@ -13,6 +13,7 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useFavoritos } from "../../contexts/FavoritosContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { ActionButton } from "../../components/ActionButton";
 import {
   adicionarFilmeAssistido,
   buscarDetalhesFilme,
@@ -34,6 +35,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
   const [erro, setErro] = useState("");
+
   const [assistido, setAssistido] = useState(false);
   const [listId, setListId] = useState<number | null>(null);
   const [alterandoAssistido, setAlterandoAssistido] = useState(false);
@@ -122,7 +124,9 @@ export function Detalhes({ route, navigation }: Props) {
 
   if (erro) {
     return (
-      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+      <View
+        style={[styles.centralizado, { backgroundColor: theme.background }]}
+      >
         <Text style={[styles.erro, { color: theme.primary }]}>{erro}</Text>
       </View>
     );
@@ -130,7 +134,9 @@ export function Detalhes({ route, navigation }: Props) {
 
   if (!filme) {
     return (
-      <View style={[styles.centralizado, { backgroundColor: theme.background }]}>
+      <View
+        style={[styles.centralizado, { backgroundColor: theme.background }]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
@@ -147,15 +153,14 @@ export function Detalhes({ route, navigation }: Props) {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.background }]}
-      >
-    {filme.backdrop_path && (
-  <Image
-    source={{ uri: buscarImagem(filme.backdrop_path, "w780") }}
-    style={styles.banner}
-    resizeMode="cover"
-  />
-)}
-  
+    >
+      {filme.backdrop_path && (
+        <Image
+          source={{ uri: buscarImagem(filme.backdrop_path, "w780") }}
+          style={styles.banner}
+          resizeMode="cover"
+        />
+      )}
 
       <View style={styles.conteudo}>
         <Pressable onPress={() => navigation.goBack()}>
@@ -179,10 +184,7 @@ export function Detalhes({ route, navigation }: Props) {
               ★ {filme.vote_average.toFixed(1)}
             </Text>
 
-            <Text style={[styles.texto, { color: theme.muted }]}>
-              {ano}
-            </Text>
-
+            <Text style={[styles.texto, { color: theme.muted }]}>{ano}</Text>
             <Text style={[styles.texto, { color: theme.muted }]}>
               {duracao}
             </Text>
@@ -193,49 +195,30 @@ export function Detalhes({ route, navigation }: Props) {
           {filme.genres.map((genero) => genero.name).join(" • ")}
         </Text>
 
-        <Pressable
-          style={[
-            styles.botao,
-            { backgroundColor: theme.primary },
+        <ActionButton
+          titulo={
+            favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"
+          }
+          onPress={() => alternarFavorito(filme)}
+          containerStyle={[
+            styles.botaoMargin,
             favorito && { backgroundColor: theme.secondary },
           ]}
-          onPress={() => alternarFavorito(filme)}
-        >
-          <Text style={styles.botaoTexto}>
-            {favorito
-              ? "Remover dos favoritos"
-              : "Adicionar aos favoritos"}
-          </Text>
-        </Pressable>
+        />
 
-        <Pressable
-          style={[
-            styles.botao,
-            styles.botaoAssistido,
-            {
-              backgroundColor: assistido
-                ? theme.secondary
-                : theme.primary,
-            },
-            alterandoAssistido && styles.botaoDesabilitado,
-          ]}
+        <ActionButton
+          titulo={
+            assistido ? "Remover dos assistidos" : "Marcar como assistido"
+          }
           onPress={alternarAssistido}
-          disabled={alterandoAssistido}
-        >
-          {alterandoAssistido ? (
-            <ActivityIndicator color={theme.white} />
-          ) : (
-            <Text style={styles.botaoTexto}>
-              {assistido
-                ? "Remover dos assistidos"
-                : "Marcar como assistido"}
-            </Text>
-          )}
-        </Pressable>
+          carregando={alterandoAssistido}
+          containerStyle={[
+            styles.botaoAssistidoMargin,
+            assistido && { backgroundColor: theme.secondary },
+          ]}
+        />
 
-        <Text style={[styles.subtitulo, { color: theme.text }]}>
-          Sinopse
-        </Text>
+        <Text style={[styles.subtitulo, { color: theme.text }]}>Sinopse</Text>
 
         <Text style={[styles.sinopse, { color: theme.text }]}>
           {filme.overview || "Sinopse não disponível."}
@@ -294,24 +277,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 20,
   },
-  botao: {
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 48,
-    padding: 14,
-    borderRadius: 10,
+  botaoMargin: {
     marginTop: 24,
   },
-  botaoAssistido: {
+  botaoAssistidoMargin: {
     marginTop: 12,
-  },
-  botaoDesabilitado: {
-    opacity: 0.7,
-  },
-  botaoTexto: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: "bold",
   },
   subtitulo: {
     fontSize: 21,
