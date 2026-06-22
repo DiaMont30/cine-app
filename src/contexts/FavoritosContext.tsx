@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { Filme } from "../services/api";
-
+import { Filme } from "../domains/entities/Filme";
 type FavoritosContextData = {
   favoritos: Filme[];
   alternarFavorito: (filme: Filme) => void;

@@ -35,6 +35,12 @@ Siga os passos abaixo para rodar o projeto no seu ambiente de desenvolvimento:
    ```bash
    npx expo start
    ```
+   
+ ######## Link para Downloado do APK ########
+                                                                                                      
+  https://expo.dev/accounts/leonamngr/projects/cine-app/builds/73f526eb-a824-415d-b771-52e451e9b21c   
+                                                                                                      
+##############################################
 
 ## 👥 Equipe de Desenvolvimento (Grupo 1 - Turma 34)
 

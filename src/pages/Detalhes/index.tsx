@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -9,19 +10,38 @@ import {
   Text,
   View,
 } from "react-native";
+import { useAuth } from "../../contexts/AuthContext";
 import { useFavoritos } from "../../contexts/FavoritosContext";
-import { RootStackParamList } from "../../routes/StackRoutes";
-import { FilmeDetalhes } from "../../domains/entities/Filme";
-import { buscarDetalhesFilme, buscarImagem } from "../../data/tmdbV3";
 import { useTheme } from "../../contexts/ThemeContext";
 import { ActionButton } from "../../components/ActionButton";
+import {
+  adicionarFilmeAssistido,
+  buscarDetalhesFilme,
+  buscarFilmesAssistidos,
+  buscarImagem,
+  buscarListasUsuario,
+  criarListaAssistidos,
+  removerFilmeAssistido,
+} from "../../data/tmdbV3";
+import {
+  buscarListaAssistidosId,
+  salvarListaAssistidosId,
+} from "../../data/storage";
+import { FilmeDetalhes } from "../../domains/entities/Filme";
+import { RootStackParamList } from "../../routes/StackRoutes";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
   const [erro, setErro] = useState("");
+
+  const [assistido, setAssistido] = useState(false);
+  const [listId, setListId] = useState<number | null>(null);
+  const [alterandoAssistido, setAlterandoAssistido] = useState(false);
+
   const { alternarFavorito, estaFavorito } = useFavoritos();
+  const { usuario, sessionId } = useAuth();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -29,6 +49,78 @@ export function Detalhes({ route, navigation }: Props) {
       .then(setFilme)
       .catch(() => setErro("Não foi possível carregar o filme."));
   }, [route.params.id]);
+
+  useEffect(() => {
+    async function verificarAssistido() {
+      if (!usuario || !sessionId) {
+        return;
+      }
+
+      try {
+        let idLista = await buscarListaAssistidosId();
+
+        if (!idLista) {
+          const listas = await buscarListasUsuario(usuario.id, sessionId);
+
+          const listaExistente = listas.find(
+            (lista) => lista.name === "CineApp - Filmes Assistidos",
+          );
+
+          idLista = listaExistente?.id ?? null;
+
+          if (!idLista) {
+            idLista = await criarListaAssistidos(sessionId);
+          }
+
+          await salvarListaAssistidosId(idLista);
+        }
+
+        const filmesAssistidos = await buscarFilmesAssistidos(idLista);
+
+        setListId(idLista);
+        setAssistido(
+          filmesAssistidos.some((item) => item.id === route.params.id),
+        );
+      } catch (error) {
+        console.error("[Detalhes] verificarAssistido:", error);
+      }
+    }
+
+    verificarAssistido();
+  }, [route.params.id, sessionId, usuario]);
+
+  async function alternarAssistido() {
+    if (!filme || !sessionId || !listId) {
+      Alert.alert(
+        "Atenção",
+        "Não foi possível acessar sua lista de filmes assistidos.",
+      );
+      return;
+    }
+
+    try {
+      setAlterandoAssistido(true);
+
+      if (assistido) {
+        await removerFilmeAssistido(listId, filme.id, sessionId);
+        setAssistido(false);
+      } else {
+        await adicionarFilmeAssistido(listId, filme.id, sessionId);
+        setAssistido(true);
+      }
+    } catch (error) {
+      console.error("[Detalhes] alternarAssistido:", error);
+
+      Alert.alert(
+        "Erro",
+        assistido
+          ? "Não foi possível remover o filme dos assistidos."
+          : "Não foi possível marcar o filme como assistido.",
+      );
+    } finally {
+      setAlterandoAssistido(false);
+    }
+  }
 
   if (erro) {
     return (
@@ -51,6 +143,7 @@ export function Detalhes({ route, navigation }: Props) {
   }
 
   const ano = filme.release_date?.slice(0, 4) || "Sem data";
+
   const duracao = filme.runtime
     ? `${Math.floor(filme.runtime / 60)}h ${filme.runtime % 60}min`
     : "Duração não informada";
@@ -65,6 +158,7 @@ export function Detalhes({ route, navigation }: Props) {
         <Image
           source={{ uri: buscarImagem(filme.backdrop_path, "w780") }}
           style={styles.banner}
+          resizeMode="cover"
         />
       )}
 
@@ -85,9 +179,11 @@ export function Detalhes({ route, navigation }: Props) {
             <Text style={[styles.titulo, { color: theme.text }]}>
               {filme.title}
             </Text>
+
             <Text style={[styles.nota, { color: theme.primary }]}>
               ★ {filme.vote_average.toFixed(1)}
             </Text>
+
             <Text style={[styles.texto, { color: theme.muted }]}>{ano}</Text>
             <Text style={[styles.texto, { color: theme.muted }]}>
               {duracao}
@@ -107,6 +203,18 @@ export function Detalhes({ route, navigation }: Props) {
           containerStyle={[
             styles.botaoMargin,
             favorito && { backgroundColor: theme.secondary },
+          ]}
+        />
+
+        <ActionButton
+          titulo={
+            assistido ? "Remover dos assistidos" : "Marcar como assistido"
+          }
+          onPress={alternarAssistido}
+          carregando={alterandoAssistido}
+          containerStyle={[
+            styles.botaoAssistidoMargin,
+            assistido && { backgroundColor: theme.secondary },
           ]}
         />
 
@@ -171,6 +279,9 @@ const styles = StyleSheet.create({
   },
   botaoMargin: {
     marginTop: 24,
+  },
+  botaoAssistidoMargin: {
+    marginTop: 12,
   },
   subtitulo: {
     fontSize: 21,

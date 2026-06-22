@@ -1,15 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useTheme } from "../contexts/ThemeContext";
+import { Assistidos } from "../pages/Assistidos";
 import { Buscar } from "../pages/Buscar";
 import { Favoritos } from "../pages/Favoritos";
 import { Home } from "../pages/Home";
-import { useTheme } from "../contexts/ThemeContext";
 import { Perfil } from "../pages/Perfil";
 
 export type TabParamList = {
   Inicio: undefined;
   Buscar: undefined;
   Favoritos: undefined;
+  Assistidos: undefined;
   Perfil: undefined;
 };
 
@@ -19,6 +21,7 @@ const icons = {
   Inicio: "home-outline",
   Buscar: "search-outline",
   Favoritos: "heart-outline",
+  Assistidos: "checkmark-circle-outline",
   Perfil: "person-outline",
 } as const;
 
@@ -49,6 +52,8 @@ export function TabRoutes() {
       <Tab.Screen name="Buscar" component={Buscar} />
 
       <Tab.Screen name="Favoritos" component={Favoritos} />
+
+      <Tab.Screen name="Assistidos" component={Assistidos} />
 
       <Tab.Screen name="Perfil" component={Perfil} />
     </Tab.Navigator>
