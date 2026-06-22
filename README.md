@@ -167,7 +167,7 @@ Inicia a versão web.
 
 O APK do CineApp pode ser acessado pelo link abaixo:
 
-https://expo.dev/accounts/leonamngr/projects/cine-app/builds/73f526eb-a824-415d-b771-52e451e9b21c
+https://expo.dev/accounts/leonamngr/projects/cine-app/builds/878cc86e-0bc7-4626-9cf1-d8774d7a8ec0
 
 ## Equipe de desenvolvimento
 
