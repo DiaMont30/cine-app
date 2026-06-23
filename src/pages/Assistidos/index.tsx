@@ -1,13 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CardFilme } from "../../components/CardFilme";
 import { useAuth } from "../../contexts/AuthContext";
@@ -17,6 +10,7 @@ import { removerFilmeAssistido } from "../../data/tmdbV3";
 import { Filme } from "../../domains/entities/Filme";
 import { styles } from "./styles";
 import { buscarFilmesAssistidos } from "../../data/tmdbV4";
+import { ActionButton } from "../../components/ActionButton";
 
 export function Assistidos() {
   const { usuario, sessionId } = useAuth();
@@ -109,15 +103,11 @@ export function Assistidos() {
       {erro ? (
         <View style={styles.centralizado}>
           <Text style={[styles.mensagem, { color: theme.muted }]}>{erro}</Text>
-
-          <Pressable
-            style={[styles.botaoTentar, { backgroundColor: theme.primary }]}
+          <ActionButton
+            titulo="Tentar novamente"
             onPress={carregarLista}
-          >
-            <Text style={[styles.botaoTexto, { color: theme.white }]}>
-              Tentar novamente
-            </Text>
-          </Pressable>
+            containerStyle={styles.botaoTentar}
+          />
         </View>
       ) : filmes.length ? (
         <FlatList
@@ -127,19 +117,14 @@ export function Assistidos() {
           renderItem={({ item }) => (
             <View style={styles.item}>
               <CardFilme filme={item} />
-
-              <Pressable
-                style={[
-                  styles.botaoRemover,
-                  {
-                    backgroundColor: theme.surface,
-                    borderColor: theme.primary,
-                  },
-                ]}
+              <ActionButton
+                titulo="Remover"
                 onPress={() => removerFilme(item)}
-              >
-                <Text style={{ color: theme.primary }}>Remover</Text>
-              </Pressable>
+                containerStyle={[
+                  styles.botaoRemover,
+                  { borderColor: theme.primary },
+                ]}
+              />
             </View>
           )}
           showsVerticalScrollIndicator={false}
