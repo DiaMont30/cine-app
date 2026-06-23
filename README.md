@@ -14,14 +14,17 @@ O aplicativo permite que o usuário entre com sua conta do TMDB, visualize infor
 * Busca de filmes por nome
 * Visualização de detalhes dos filmes
 * Adição e remoção de favoritos
-* Favoritos salvos na conta do TMDB
+* Favoritos sincronizados com a conta do TMDB
 * Lista personalizada de filmes assistidos
 * Adição e remoção de filmes assistidos
+* Comentários personalizados para filmes assistidos
+* Atualização de comentários utilizando a API TMDB v4 (CRUD)
 * Perfil do usuário
 * Tema claro e escuro
 * Persistência da preferência de tema
-* Navegação por Stack e Bottom Tabs
+* Navegação por Stack Navigation e Bottom Tabs
 * Validação de campos e tratamento de erros
+* Integração com as APIs TMDB v3 e TMDB v4
 
 ## Tecnologias utilizadas
 
@@ -36,7 +39,10 @@ Este projeto foi desenvolvido utilizando:
 * Context API
 * Expo Linear Gradient
 * Expo Vector Icons
-* API do [TMDB — The Movie Database](https://www.themoviedb.org/)
+* API do [TMDB — The Movie Database](https://www.themoviedb.org/)## Tecnologias utilizadas
+* TMDB API v3
+* TMDB API v4
+* EAS Build
 
 ## Estrutura principal
 
@@ -50,7 +56,9 @@ cine-app/
 │   ├── domains/
 │   ├── pages/
 │   ├── routes/
-│   └── themes/
+│   ├── services/
+│   ├── themes/
+│   └── utils/
 ├── App.tsx
 ├── app.json
 ├── eas.json
