@@ -88,12 +88,9 @@ export function AreaComentario({
 
           <ActionButton
             titulo="Salvar Comentário"
-            onPress={handleSalvarComentario}
+            onPressIn={handleSalvarComentario}
             carregando={salvandoComentario}
-            containerStyle={[
-              styles.botaoSalvar,
-              { backgroundColor: theme.secondary },
-            ]}
+            containerStyle={[styles.botaoSalvar]}
           />
         </View>
       )}

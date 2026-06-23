@@ -71,6 +71,7 @@ export function Detalhes({ route, navigation }: Props) {
 
   return (
     <ScrollView
+      keyboardShouldPersistTaps="handled"
       style={[styles.container, { backgroundColor: theme.background }]}
     >
       {filme.backdrop_path && (
