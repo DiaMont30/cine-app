@@ -1,9 +1,7 @@
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { useFocusEffect } from "@react-navigation/native";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -11,140 +9,39 @@ import {
   View,
 } from "react-native";
 import { ActionButton } from "../../components/ActionButton";
+import { AreaComentario } from "../../components/AreaComentario";
 import { useAuth } from "../../contexts/AuthContext";
 import { useFavoritos } from "../../contexts/FavoritosContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import { obterListaAssistidosId } from "../../data/storage";
-import {
-  adicionarFilmeAssistido,
-  buscarDetalhesFilme,
-  buscarImagem,
-  removerFilmeAssistido,
-} from "../../data/tmdbV3";
+import { buscarDetalhesFilme, buscarImagem } from "../../data/tmdbV3";
 import { FilmeDetalhes } from "../../domains/entities/Filme";
 import { TabParamList } from "../../routes/TabRoutes";
 import { styles } from "./styles";
-import {
-  atualizarComentarioFilme,
-  buscarFilmesAssistidos,
-} from "../../data/tmdbV4";
-import { Input } from "../../components/Input";
+import { useFilmeAssistido } from "../../utils/hooks/useFilmeAssistidos";
 
 type Props = BottomTabScreenProps<TabParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
   const [erro, setErro] = useState("");
-  const [assistido, setAssistido] = useState(false);
-  const [listId, setListId] = useState<number | null>(null);
-  const [alterandoAssistido, setAlterandoAssistido] = useState(false);
-
-  const [comentario, setComentario] = useState("");
-  const [comentarioSalvo, setComentarioSalvo] = useState<string | null>(null);
-  const [salvandoComentario, setSalvandoComentario] = useState(false);
 
   const { alternarFavorito, estaFavorito } = useFavoritos();
-  const { usuario, sessionId } = useAuth();
+  const { sessionId } = useAuth();
   const { theme } = useTheme();
+
+  const {
+    assistido,
+    listId,
+    alterandoAssistido,
+    comentarioSalvo,
+    alternarAssistido,
+  } = useFilmeAssistido(filme?.id);
 
   useEffect(() => {
     buscarDetalhesFilme(route.params.id)
       .then(setFilme)
       .catch(() => setErro("Não foi possível carregar o filme."));
   }, [route.params.id]);
-
-  useFocusEffect(
-    useCallback(() => {
-      async function verificarAssistido() {
-        if (!usuario || !sessionId) {
-          return;
-        }
-
-        try {
-          const idLista = await obterListaAssistidosId(usuario.id, sessionId);
-          const filmesAssistidos = await buscarFilmesAssistidos(idLista);
-
-          setListId(idLista);
-
-          const filmeNaLista = filmesAssistidos.find(
-            (item: any) => item.id === route.params.id,
-          );
-
-          if (filmeNaLista) {
-            setAssistido(true);
-            if (filmeNaLista.comment) {
-              setComentarioSalvo(filmeNaLista.comment);
-              setComentario(filmeNaLista.comment);
-            } else {
-              setComentarioSalvo(null);
-              setComentario("");
-            }
-          } else {
-            setAssistido(false);
-            setComentarioSalvo(null);
-            setComentario("");
-          }
-        } catch (error) {
-          console.error("[Detalhes] verificarAssistido:", error);
-        }
-      }
-
-      verificarAssistido();
-    }, [route.params.id, sessionId, usuario]),
-  );
-
-  async function alternarAssistido() {
-    if (!filme || !sessionId || !listId) {
-      Alert.alert(
-        "Atenção",
-        "Não foi possível acessar sua lista de filmes assistidos.",
-      );
-      return;
-    }
-
-    try {
-      setAlterandoAssistido(true);
-
-      if (assistido) {
-        await removerFilmeAssistido(listId, filme.id, sessionId);
-        setAssistido(false);
-        setComentarioSalvo(null);
-        setComentario("");
-      } else {
-        await adicionarFilmeAssistido(listId, filme.id, sessionId);
-        setAssistido(true);
-      }
-    } catch (error) {
-      console.error("[Detalhes] alternarAssistido:", error);
-      Alert.alert(
-        "Erro",
-        assistido ? "Não foi possível remover." : "Não foi possível marcar.",
-      );
-    } finally {
-      setAlterandoAssistido(false);
-    }
-  }
-
-  async function handleSalvarComentario() {
-    if (!filme || !sessionId || !listId) return;
-
-    if (comentario.trim().length === 0) {
-      Alert.alert("Atenção", "Digite um comentário antes de salvar.");
-      return;
-    }
-
-    try {
-      setSalvandoComentario(true);
-      await atualizarComentarioFilme(listId, filme.id, comentario, sessionId);
-
-      setComentarioSalvo(comentario);
-    } catch (error) {
-      console.error("[Detalhes] handleSalvarComentario:", error);
-      Alert.alert("Erro", "Não foi possível salvar o comentário.");
-    } finally {
-      setSalvandoComentario(false);
-    }
-  }
 
   if (erro) {
     return (
@@ -238,56 +135,13 @@ export function Detalhes({ route, navigation }: Props) {
           ]}
         />
 
-        {assistido && (
-          <View style={styles.areaComentario}>
-            <Text
-              style={[styles.subtitulo, { color: theme.text, marginTop: 10 }]}
-            >
-              Sua Avaliação
-            </Text>
-
-            {comentarioSalvo !== null ? (
-              <View
-                style={[
-                  styles.cardComentario,
-                  { backgroundColor: theme.surface },
-                ]}
-              >
-                <Text style={[styles.textoComentario, { color: theme.text }]}>
-                  "{comentarioSalvo}"
-                </Text>
-
-                <Pressable
-                  onPress={() => setComentarioSalvo(null)}
-                  style={styles.botaoEditar}
-                >
-                  <Text style={[styles.textoEditar, { color: theme.primary }]}>
-                    Editar comentário
-                  </Text>
-                </Pressable>
-              </View>
-            ) : (
-              <View>
-                <Input
-                  placeholder="O que achou do filme?"
-                  value={comentario}
-                  onChangeText={setComentario}
-                  returnKeyType="send"
-                  onSubmitEditing={handleSalvarComentario}
-                />
-
-                <ActionButton
-                  titulo="Salvar Comentário"
-                  onPress={handleSalvarComentario}
-                  carregando={salvandoComentario}
-                  containerStyle={{
-                    backgroundColor: theme.secondary,
-                    marginTop: -8,
-                  }}
-                />
-              </View>
-            )}
-          </View>
+        {assistido && listId && sessionId && (
+          <AreaComentario
+            listId={listId}
+            filmeId={filme.id}
+            sessionId={sessionId}
+            comentarioInicial={comentarioSalvo}
+          />
         )}
 
         <Text style={[styles.subtitulo, { color: theme.text }]}>Sinopse</Text>
