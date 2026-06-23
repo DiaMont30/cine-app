@@ -1,4 +1,4 @@
-import { Filme, FilmeDetalhes } from "../domains/entities/Filme";
+import { Filme } from "../domains/entities/Filme";
 
 const API_URL = "https://api.themoviedb.org/3";
 const token = process.env.EXPO_PUBLIC_TMDB_TOKEN;
@@ -21,9 +21,3 @@ async function requisicao<T>(endpoint: string): Promise<T> {
 
   return response.json();
 }
-
-
-
-
-
-

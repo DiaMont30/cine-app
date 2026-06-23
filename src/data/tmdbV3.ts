@@ -237,16 +237,6 @@ export async function criarListaAssistidos(sessionId: string): Promise<number> {
   return data.list_id;
 }
 
-export async function buscarFilmesAssistidos(listId: number): Promise<Filme[]> {
-  const { data } = await tmdbV3.get<RespostaListaDetalhes>(`/list/${listId}`, {
-    params: {
-      language: "pt-BR",
-    },
-  });
-
-  return data.items;
-}
-
 export async function adicionarFilmeAssistido(
   listId: number,
   filmeId: number,
