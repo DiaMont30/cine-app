@@ -50,21 +50,90 @@ Este projeto foi desenvolvido utilizando:
 cine-app/
 ├── assets/
 ├── src/
-│   ├── components/
-│   ├── contexts/
-│   ├── data/
-│   ├── domains/
-│   ├── pages/
-│   ├── routes/
-│   ├── services/
-│   ├── themes/
-│   └── utils/
-├── App.tsx
-├── app.json
-├── eas.json
-├── package.json
-├── tsconfig.json
-└── README.md
+├───components
+│   ├───ActionButton
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───AreaComentario
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───CardFilme
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───Input
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───PosterGrid
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   └───SeletorTema
+│           index.tsx
+│           styles.ts
+│           
+├───contexts
+│       AuthContext.tsx
+│       FavoritosContext.tsx
+│       ThemeContext.tsx
+│       
+├───data
+│       authService.ts
+│       storage.ts
+│       tmdbV3.ts
+│       tmdbV4.ts
+│       
+├───domains
+│   └───entities
+│           Filme.ts
+│           Usuario.ts
+│           
+├───pages
+│   ├───Assistidos
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───Buscar
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───Detalhes
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───Favoritos
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───Home
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   ├───Login
+│   │       index.tsx
+│   │       styles.ts
+│   │       
+│   └───Perfil
+│           index.tsx
+│           styles.ts
+│           
+├───routes
+│       AppRoutes.tsx
+│       AuthRoutes.tsx
+│       TabRoutes.tsx
+│       
+├───services
+│       api.ts
+│       
+├───themes
+│       themes.ts
+│       
+└───utils
+            useFilmeAssistidos.ts
+            usePosterDestaque.ts
 ```
 
 ## Como rodar o projeto localmente
