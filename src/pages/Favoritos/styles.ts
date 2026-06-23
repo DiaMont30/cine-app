@@ -26,9 +26,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   item: {
-    flex: 1,
-    maxWidth: "48%",
-    marginBottom: 20,
+    alignItems: "center",
   },
   botaoRemover: {
     borderWidth: 1,
