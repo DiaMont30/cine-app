@@ -30,8 +30,12 @@ export function Favoritos() {
                 onPress={() => alternarFavorito(item)}
                 containerStyle={[
                   styles.botaoRemover,
-                  { borderColor: theme.primary },
+                  {
+                    backgroundColor: theme.surface,
+                    borderColor: theme.primary,
+                  },
                 ]}
+                textStyle={{ color: theme.primary }}
               />
             </View>
           )}
