@@ -1,9 +1,7 @@
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { useFocusEffect } from "@react-navigation/native";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -11,96 +9,39 @@ import {
   View,
 } from "react-native";
 import { ActionButton } from "../../components/ActionButton";
+import { AreaComentario } from "../../components/AreaComentario";
 import { useAuth } from "../../contexts/AuthContext";
 import { useFavoritos } from "../../contexts/FavoritosContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import { obterListaAssistidosId } from "../../data/storage";
-import {
-  adicionarFilmeAssistido,
-  buscarDetalhesFilme,
-  buscarFilmesAssistidos,
-  buscarImagem,
-  removerFilmeAssistido,
-} from "../../data/tmdbV3";
+import { buscarDetalhesFilme, buscarImagem } from "../../data/tmdbV3";
 import { FilmeDetalhes } from "../../domains/entities/Filme";
 import { TabParamList } from "../../routes/TabRoutes";
 import { styles } from "./styles";
+import { useFilmeAssistido } from "../../utils/hooks/useFilmeAssistidos";
 
 type Props = BottomTabScreenProps<TabParamList, "Detalhes">;
 
 export function Detalhes({ route, navigation }: Props) {
   const [filme, setFilme] = useState<FilmeDetalhes>();
   const [erro, setErro] = useState("");
-  const [assistido, setAssistido] = useState(false);
-  const [listId, setListId] = useState<number | null>(null);
-  const [alterandoAssistido, setAlterandoAssistido] = useState(false);
 
   const { alternarFavorito, estaFavorito } = useFavoritos();
-  const { usuario, sessionId } = useAuth();
+  const { sessionId } = useAuth();
   const { theme } = useTheme();
+
+  const {
+    assistido,
+    listId,
+    alterandoAssistido,
+    comentarioSalvo,
+    alternarAssistido,
+  } = useFilmeAssistido(filme?.id);
 
   useEffect(() => {
     buscarDetalhesFilme(route.params.id)
       .then(setFilme)
       .catch(() => setErro("Não foi possível carregar o filme."));
   }, [route.params.id]);
-
-  useFocusEffect(
-    useCallback(() => {
-      async function verificarAssistido() {
-        if (!usuario || !sessionId) {
-          return;
-        }
-
-        try {
-          const idLista = await obterListaAssistidosId(usuario.id, sessionId);
-          const filmesAssistidos = await buscarFilmesAssistidos(idLista);
-
-          setListId(idLista);
-          setAssistido(
-            filmesAssistidos.some((item) => item.id === route.params.id),
-          );
-        } catch (error) {
-          console.error("[Detalhes] verificarAssistido:", error);
-        }
-      }
-
-      verificarAssistido();
-    }, [route.params.id, sessionId, usuario])
-  );
-
-  async function alternarAssistido() {
-    if (!filme || !sessionId || !listId) {
-      Alert.alert(
-        "Atenção",
-        "Não foi possível acessar sua lista de filmes assistidos.",
-      );
-      return;
-    }
-
-    try {
-      setAlterandoAssistido(true);
-
-      if (assistido) {
-        await removerFilmeAssistido(listId, filme.id, sessionId);
-        setAssistido(false);
-      } else {
-        await adicionarFilmeAssistido(listId, filme.id, sessionId);
-        setAssistido(true);
-      }
-    } catch (error) {
-      console.error("[Detalhes] alternarAssistido:", error);
-
-      Alert.alert(
-        "Erro",
-        assistido
-          ? "Não foi possível remover o filme dos assistidos."
-          : "Não foi possível marcar o filme como assistido.",
-      );
-    } finally {
-      setAlterandoAssistido(false);
-    }
-  }
 
   if (erro) {
     return (
@@ -123,11 +64,9 @@ export function Detalhes({ route, navigation }: Props) {
   }
 
   const ano = filme.release_date?.slice(0, 4) || "Sem data";
-
   const duracao = filme.runtime
     ? `${Math.floor(filme.runtime / 60)}h ${filme.runtime % 60}min`
     : "Duração não informada";
-
   const favorito = estaFavorito(filme.id);
 
   return (
@@ -159,13 +98,10 @@ export function Detalhes({ route, navigation }: Props) {
             <Text style={[styles.titulo, { color: theme.text }]}>
               {filme.title}
             </Text>
-
             <Text style={[styles.nota, { color: theme.primary }]}>
               ★ {filme.vote_average.toFixed(1)}
             </Text>
-
             <Text style={[styles.texto, { color: theme.muted }]}>{ano}</Text>
-
             <Text style={[styles.texto, { color: theme.muted }]}>
               {duracao}
             </Text>
@@ -198,6 +134,15 @@ export function Detalhes({ route, navigation }: Props) {
             assistido && { backgroundColor: theme.secondary },
           ]}
         />
+
+        {assistido && listId && sessionId && (
+          <AreaComentario
+            listId={listId}
+            filmeId={filme.id}
+            sessionId={sessionId}
+            comentarioInicial={comentarioSalvo}
+          />
+        )}
 
         <Text style={[styles.subtitulo, { color: theme.text }]}>Sinopse</Text>
 

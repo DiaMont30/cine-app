@@ -6,6 +6,7 @@ export type Filme = {
   backdrop_path: string | null;
   release_date: string;
   vote_average: number;
+  comment?: string;
 };
 
 export type FilmeDetalhes = Filme & {
