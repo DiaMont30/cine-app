@@ -33,9 +33,10 @@ export const styles = StyleSheet.create({
   botaoRemover: {
     borderWidth: 1,
     borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 18,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     marginTop: 8,
+    minHeight: 0,
   },
   botaoTentar: {
     borderRadius: 10,
