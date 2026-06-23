@@ -5,6 +5,7 @@ import {
   PressableProps,
   StyleProp,
   ViewStyle,
+  TextStyle,
   View,
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -14,6 +15,7 @@ interface ActionButtonProps extends PressableProps {
   titulo: string;
   carregando?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   icone?: React.ReactNode;
 }
 
@@ -21,6 +23,7 @@ export function ActionButton({
   titulo,
   carregando = false,
   containerStyle,
+  textStyle,
   disabled,
   icone,
   ...rest
@@ -44,7 +47,7 @@ export function ActionButton({
       ) : (
         <View style={styles.conteudoInterno}>
           {icone && <View style={styles.containerIcone}>{icone}</View>}
-          <Text style={[styles.botaoTexto, { color: theme.white }]}>
+          <Text style={[styles.botaoTexto, { color: theme.white }, textStyle]}>
             {titulo}
           </Text>
         </View>
